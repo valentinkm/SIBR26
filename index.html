@@ -169,10 +169,30 @@
   }
   .org-email:hover { text-decoration: underline; }
   .org-bio {
-    margin: 0;
+    margin: 8px 0 0;
     font-size: 0.95rem;
     color: var(--ink);
   }
+  details.organizer-details > summary {
+    list-style: none;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 0.85rem;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  details.organizer-details > summary::-webkit-details-marker { display: none; }
+  details.organizer-details > summary::before {
+    content: "▸";
+    display: inline-block;
+    transition: transform 0.15s ease;
+    font-size: 0.75rem;
+  }
+  details.organizer-details[open] > summary::before { transform: rotate(90deg); }
+  details.organizer-details > summary:hover { color: var(--accent); }
   footer {
     margin-top: 48px;
     color: var(--muted);
@@ -522,12 +542,18 @@
       <div class="organizer">
         <h3 class="org-name">Taisiia Tikhomirova</h3>
         <a class="org-email" href="mailto:tikhomirova@mpib-berlin.mpg.de">tikhomirova@mpib-berlin.mpg.de</a>
-        <p class="org-bio">Taisiia is a PhD student at the Center for Adaptive Rationality (ARC) at the Max Planck Institute for Human Development. She first came to ARC as a research assistant and is now continuing her work at the intersection of cognitive science and large language models. Before starting her PhD, she studied computational neuroscience at the Bernstein Center for Computational Neuroscience Berlin. Her research focuses on how psychological and psycholinguistic information is represented in large language models, and what these models can reveal about human-like meaning representations. She is also leading PsychLing-101, a community-driven project that aims to standardize psycholinguistic datasets for reuse in LLM research and cognitive modeling.</p>
+        <details class="organizer-details">
+          <summary>Bio</summary>
+          <p class="org-bio">Taisiia is a PhD student at the Center for Adaptive Rationality (ARC) at the Max Planck Institute for Human Development. She first came to ARC as a research assistant and is now continuing her work at the intersection of cognitive science and large language models. Before starting her PhD, she studied computational neuroscience at the Bernstein Center for Computational Neuroscience Berlin. Her research focuses on how psychological and psycholinguistic information is represented in large language models, and what these models can reveal about human-like meaning representations. She is also leading PsychLing-101, a community-driven project that aims to standardize psycholinguistic datasets for reuse in LLM research and cognitive modeling.</p>
+        </details>
       </div>
       <div class="organizer">
         <h3 class="org-name">Valentin Kriegmair</h3>
         <a class="org-email" href="mailto:kriegmair@mpib-berlin.mpg.de">kriegmair@mpib-berlin.mpg.de</a>
-        <p class="org-bio">Valentin is a PhD student at the Center for Adaptive Rationality (ARC) at the Max Planck Institute for Human Development. He first came to the Institute as a research assistant in the Formal Methods Group at the Center for Lifespan Psychology, and now works at the intersection of psychological measurement and large language models. Before starting his PhD, he studied Psychology at Humboldt University Berlin. His research focuses on using large language models to represent and compare psychological constructs and the instruments used to measure them, mapping their relations at scale. Alongside this, he investigates how individual language models differ in their behavioral dispositions.</p>
+        <details class="organizer-details">
+          <summary>Bio</summary>
+          <p class="org-bio">Valentin is a PhD student at the Center for Adaptive Rationality (ARC) at the Max Planck Institute for Human Development. He first came to the Institute as a research assistant in the Formal Methods Group at the Center for Lifespan Psychology, and now works at the intersection of psychological measurement and large language models. Before starting his PhD, he studied Psychology at Humboldt University Berlin. His research focuses on using large language models to represent and compare psychological constructs and the instruments used to measure them, mapping their relations at scale. Alongside this, he investigates how individual language models differ in their behavioral dispositions.</p>
+        </details>
       </div>
     </div>
   </section>
