@@ -148,6 +148,31 @@
     color: var(--muted);
     font-style: italic;
   }
+  .organizers { padding: 0; }
+  .organizer {
+    padding: 18px 20px;
+    border-top: 1px solid var(--line);
+  }
+  .organizer:first-child { border-top: none; }
+  .org-name {
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .org-email {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .org-email:hover { text-decoration: underline; }
+  .org-bio {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--ink);
+  }
   footer {
     margin-top: 48px;
     color: var(--muted);
@@ -489,6 +514,22 @@
         <div class="session"><span class="time">14:00–16:00</span><span class="title">Closing Session</span></div>
       </li>
     </ul>
+  </section>
+
+  <section class="day">
+    <div class="day-header">Organizers</div>
+    <div class="organizers">
+      <div class="organizer">
+        <h3 class="org-name">Taisiia Tikhomirova</h3>
+        <a class="org-email" href="mailto:tikhomirova@mpib-berlin.mpg.de">tikhomirova@mpib-berlin.mpg.de</a>
+        <p class="org-bio">Taisiia is a PhD student at the Center for Adaptive Rationality (ARC) at the Max Planck Institute for Human Development. She first came to ARC as a research assistant and is now continuing her work at the intersection of cognitive science and large language models. Before starting her PhD, she studied computational neuroscience at the Bernstein Center for Computational Neuroscience Berlin. Her research focuses on how psychological and psycholinguistic information is represented in large language models, and what these models can reveal about human-like meaning representations. She is also leading PsychLing-101, a community-driven project that aims to standardize psycholinguistic datasets for reuse in LLM research and cognitive modeling.</p>
+      </div>
+      <div class="organizer">
+        <h3 class="org-name">Valentin Kriegmair</h3>
+        <a class="org-email" href="mailto:kriegmair@mpib-berlin.mpg.de">kriegmair@mpib-berlin.mpg.de</a>
+        <p class="org-bio">Valentin is a PhD student at the Center for Adaptive Rationality (ARC) at the Max Planck Institute for Human Development. He first came to the Institute as a research assistant in the Formal Methods Group at the Center for Lifespan Psychology, and now works at the intersection of psychological measurement and large language models. Before starting his PhD, he studied Psychology at Humboldt University Berlin. His research focuses on using large language models to represent and compare psychological constructs and the instruments used to measure them, mapping their relations at scale. Alongside this, he investigates how individual language models differ in their behavioral dispositions.</p>
+      </div>
+    </div>
   </section>
 
   <footer>SIBR 2026 · Max Planck Institute for Human Development</footer>
