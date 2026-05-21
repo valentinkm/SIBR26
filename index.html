@@ -6,15 +6,16 @@
 <title>SIBR 2026 — Schedule</title>
 <style>
   :root {
-    --bg: #fafafa;
-    --panel: #ffffff;
-    --ink: #1a1a1a;
-    --muted: #6b6b6b;
-    --line: #e5e5e5;
-    --accent: #1f4e78;
-    --accent-soft: #eaf1f8;
-    --tag-bg: #f0f3f7;
-    --tag-ink: #3a4a5a;
+    --bg: #0d1117;
+    --panel: #161b22;
+    --ink: #e6edf3;
+    --muted: #8b949e;
+    --line: #30363d;
+    --accent: #58a6ff;
+    --accent-deep: #1f4e78;
+    --accent-soft: #1f2d3f;
+    --tag-bg: #21262d;
+    --tag-ink: #c9d1d9;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
@@ -57,13 +58,13 @@
   }
   .day-header {
     padding: 14px 20px;
-    background: var(--accent);
-    color: #fff;
+    background: var(--accent-deep);
+    color: #f0f6ff;
     font-weight: 600;
     font-size: 1.05rem;
     letter-spacing: 0.01em;
   }
-  .day-empty .day-header { background: #9aa3ad; }
+  .day-empty .day-header { background: #2d333b; color: var(--muted); }
   .sessions { list-style: none; margin: 0; padding: 0; }
   .session-row {
     border-top: 1px solid var(--line);
@@ -123,7 +124,7 @@
   .details-body {
     padding: 4px 20px 18px 168px;
     font-size: 0.92rem;
-    color: #333;
+    color: var(--ink);
   }
   .details-body .tags {
     margin-bottom: 10px;
