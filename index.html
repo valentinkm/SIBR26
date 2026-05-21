@@ -13,6 +13,8 @@
     --line: #e5e5e5;
     --accent: #1f4e78;
     --accent-soft: #eaf1f8;
+    --tag-bg: #f0f3f7;
+    --tag-ink: #3a4a5a;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
@@ -22,7 +24,17 @@
     -webkit-font-smoothing: antialiased;
   }
   .wrap { max-width: 980px; margin: 0 auto; padding: 48px 24px 96px; }
-  header { margin-bottom: 40px; }
+  .hero {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .hero img {
+    max-width: 100%;
+    height: auto;
+    max-height: 480px;
+    border-radius: 8px;
+  }
+  header.intro { margin: 0 0 40px; }
   h1 {
     font-size: 2.1rem;
     margin: 0 0 6px;
@@ -46,15 +58,17 @@
   }
   .day-empty .day-header { background: #9aa3ad; }
   .sessions { list-style: none; margin: 0; padding: 0; }
+  .session-row {
+    border-top: 1px solid var(--line);
+  }
+  .session-row:first-child { border-top: none; }
   .session {
     display: grid;
     grid-template-columns: 130px 1fr;
     gap: 18px;
     padding: 14px 20px;
-    border-top: 1px solid var(--line);
     align-items: baseline;
   }
-  .session:first-child { border-top: none; }
   .time {
     color: var(--accent);
     font-variant-numeric: tabular-nums;
@@ -64,7 +78,6 @@
   }
   .title { font-size: 0.98rem; }
   .speaker { font-weight: 600; }
-  .talk { color: var(--ink); }
   .meta-tag {
     display: inline-block;
     font-size: 0.78rem;
@@ -77,6 +90,51 @@
     margin-right: 8px;
     vertical-align: middle;
   }
+  details.session-details {
+    border-top: 1px dashed var(--line);
+  }
+  details.session-details > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 8px 20px 8px 168px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  details.session-details > summary::-webkit-details-marker { display: none; }
+  details.session-details > summary::before {
+    content: "▸";
+    display: inline-block;
+    transition: transform 0.15s ease;
+    font-size: 0.75rem;
+  }
+  details.session-details[open] > summary::before { transform: rotate(90deg); }
+  details.session-details > summary:hover { color: var(--accent); }
+  .details-body {
+    padding: 4px 20px 18px 168px;
+    font-size: 0.92rem;
+    color: #333;
+  }
+  .details-body .tags {
+    margin-bottom: 10px;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: var(--tag-ink);
+    background: var(--tag-bg);
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-right: 6px;
+    margin-bottom: 4px;
+  }
+  .placeholder {
+    color: var(--muted);
+    font-style: italic;
+  }
   .free-day {
     padding: 14px 20px;
     color: var(--muted);
@@ -88,75 +146,237 @@
     font-size: 0.85rem;
     text-align: center;
   }
-  @media (max-width: 560px) {
+  @media (max-width: 640px) {
     .session { grid-template-columns: 1fr; gap: 4px; }
     .time { font-size: 0.85rem; }
+    details.session-details > summary,
+    .details-body { padding-left: 20px; }
   }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
+
+  <div class="hero">
+    <img src="poster_blue_web.png" alt="SIBR 2026 — Summer Institute on Bounded Rationality">
+  </div>
+
+  <header class="intro">
     <h1>SIBR 2026 — Schedule</h1>
-    <p class="subtitle">8–16 June 2026</p>
+    <p class="subtitle">Decision Making in the Age of AI · 8–16 June 2026 · Max Planck Institute for Human Development, Berlin</p>
   </header>
 
   <section class="day">
     <div class="day-header">Monday, 8 June</div>
     <ul class="sessions">
-      <li class="session"><span class="time">16:30–18:00</span><span class="title">Registration / Introduction</span></li>
-      <li class="session"><span class="time">18:30–20:00</span><span class="title">Institute Tour / Drinks</span></li>
+      <li class="session-row">
+        <div class="session"><span class="time">16:30–18:00</span><span class="title">Registration / Introduction</span></div>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">18:30–20:00</span><span class="title">Institute Tour / Drinks</span></div>
+      </li>
     </ul>
   </section>
 
   <section class="day">
     <div class="day-header">Tuesday, 9 June</div>
     <ul class="sessions">
-      <li class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Ralph Hertwig</span> — What is Bounded Rationality</span></li>
-      <li class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Konstantinos Katsikopoulos</span> — Operationalizing Bounded Rationality</span></li>
-      <li class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Özgür Şimşek</span> — Fast and Frugal Trees</span></li>
-      <li class="session"><span class="time">16:30–18:00</span><span class="title">Speed Talks and Poster Session</span></li>
+      <li class="session-row">
+        <div class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Ralph Hertwig</span> — What Is Bounded Rationality?</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Talk</span><span class="tag">MPIB · Director</span></div>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Konstantinos Katsikopoulos</span> — Operationalizing Bounded Rationality</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Talk</span><span class="tag">Guest speaker</span></div>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Özgür Şimşek</span> — Fast and Frugal Trees</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Workshop</span><span class="tag">Guest speaker</span></div>
+            <p>Two-hour workshop. Typical format: roughly 50:50 presentation and a hands-on component (e.g., group exercises, building decision trees, working through data).</p>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">16:30–18:00</span><span class="title">Speed Talks and Poster Session</span></div>
+      </li>
     </ul>
   </section>
 
   <section class="day">
     <div class="day-header">Wednesday, 10 June</div>
     <ul class="sessions">
-      <li class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Peter M. Todd</span> — Simple Heuristics for Search</span></li>
-      <li class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Tomás Lejarraga</span> — How Experimental Methods Shaped Views on Human Competence and Rationality</span></li>
-      <li class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Shahar Hechtlinger</span> — How People Make Important Decisions</span></li>
-      <li class="session"><span class="time">16:30–18:00</span><span class="title"><span class="meta-tag">Q&amp;A</span>Ralph Hertwig and Peter M. Todd</span></li>
+      <li class="session-row">
+        <div class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Peter M. Todd</span> — Simple Heuristics for Search</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Talk</span><span class="tag">Guest speaker</span></div>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Tomás Lejarraga</span> — How Experimental Methods Shaped Views on Human Competence and Rationality</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Talk</span><span class="tag">Guest speaker</span></div>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Shahar Hechtlinger</span> — How People Make Important Decisions</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Workshop</span><span class="tag">MPIB</span></div>
+            <p>Two-hour workshop. Typical format: roughly 50:50 presentation and a hands-on component for participants.</p>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">16:30–18:00</span><span class="title"><span class="meta-tag">Q&amp;A</span>Ralph Hertwig and Peter M. Todd</span></div>
+      </li>
     </ul>
   </section>
 
   <section class="day">
     <div class="day-header">Thursday, 11 June</div>
     <ul class="sessions">
-      <li class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Kamil Fulawka</span> — Decoding Boundedly Rational Decisions Leveraging Large Language Models</span></li>
-      <li class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Levin Brinkmann</span> — When Machines Expand Human Problem-Solving</span></li>
-      <li class="session"><span class="time">14:00–16:00</span><span class="title">Speed Talks and Poster Session</span></li>
-      <li class="session"><span class="time">16:30–18:00</span><span class="title"><span class="meta-tag">Keynote</span><span class="speaker">Krishna Gummadi</span> — Heuristics in Agentic AI</span></li>
-      <li class="session"><span class="time">18:30–20:00</span><span class="title">BBQ</span></li>
+      <li class="session-row">
+        <div class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Kamil Fulawka</span> — Decoding Boundedly Rational Decisions Leveraging Large Language Models</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Talk</span><span class="tag">Guest speaker</span></div>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Levin Brinkmann</span> — When Machines Expand Human Problem-Solving</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Talk</span><span class="tag">MPIB</span></div>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">14:00–16:00</span><span class="title">Speed Talks and Poster Session</span></div>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">16:30–18:00</span><span class="title"><span class="meta-tag">Keynote</span><span class="speaker">Krishna Gummadi</span> — Heuristics in Agentic AI</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Keynote</span><span class="tag">Guest speaker</span></div>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">18:30–20:00</span><span class="title">BBQ</span></div>
+      </li>
     </ul>
   </section>
 
   <section class="day">
     <div class="day-header">Friday, 12 June</div>
     <ul class="sessions">
-      <li class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Rui Mata</span> — Advancing Cognitive Science with LLMs</span></li>
-      <li class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Dirk Wulff</span> — Increasing Conceptual Clarity in Psychology with LLMs</span></li>
-      <li class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Raluca Rilla</span> — Recognising and Mitigating LLM Pollution</span></li>
-      <li class="session"><span class="time">16:30–18:00</span><span class="title">Project Discussion</span></li>
+      <li class="session-row">
+        <div class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Rui Mata</span> — Advancing Cognitive Science with LLMs</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Talk</span><span class="tag">Guest speaker</span></div>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Dirk Wulff</span> — Increasing Conceptual Clarity in Psychology with LLMs</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Talk</span><span class="tag">MPIB</span></div>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Raluca Rilla</span> — Recognising and Mitigating LLM Pollution</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Workshop</span><span class="tag">MPIB</span></div>
+            <p>Two-hour workshop. Typical format: roughly 50:50 presentation and a hands-on component for participants.</p>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">16:30–18:00</span><span class="title">Project Discussion</span></div>
+      </li>
     </ul>
   </section>
 
   <section class="day">
     <div class="day-header">Saturday, 13 June</div>
     <ul class="sessions">
-      <li class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Jason Burton</span> — How Large Language Models Can Reshape Collective Intelligence</span></li>
-      <li class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Nikolas Zöller</span> — Human–AI Collectives</span></li>
-      <li class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Stefan Herzog &amp; Julian Berger</span> — Hybrid Intelligence</span></li>
-      <li class="session"><span class="time">16:30–18:00</span><span class="title">Project Discussion</span></li>
+      <li class="session-row">
+        <div class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Jason Burton</span> — How Large Language Models Can Reshape Collective Intelligence</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Talk</span><span class="tag">Guest speaker</span></div>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Nikolas Zöller</span> — Human–AI Collectives</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Talk</span><span class="tag">MPIB</span></div>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Stefan Herzog &amp; Julian Berger</span> — Hybrid Intelligence</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Workshop</span><span class="tag">MPIB</span></div>
+            <p>Two-hour workshop. Typical format: roughly 50:50 presentation and a hands-on component for participants.</p>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">16:30–18:00</span><span class="title">Project Discussion</span></div>
+      </li>
     </ul>
   </section>
 
@@ -168,24 +388,75 @@
   <section class="day">
     <div class="day-header">Monday, 15 June</div>
     <ul class="sessions">
-      <li class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Zoe Rahwan</span> — Delegating Decisions to AI and Dishonest Behaviour</span></li>
-      <li class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Anastasia Kozyreva</span> — Free Speech vs. Harmful Misinformation: The Psychology and Politics of Online Speech Governance</span></li>
-      <li class="session"><span class="time">14:00–16:00</span><span class="title"><span class="speaker">Mario Scharfbillig</span> — Fractured Reality: How Democracy Can Win the Global Struggle Over the Information Space</span></li>
-      <li class="session"><span class="time">16:30–18:00</span><span class="title"><span class="speaker">Renée DiResta</span> — The Hero of Science: Integrity in the Age of Information Warfare</span></li>
-      <li class="session"><span class="time">18:30–20:00</span><span class="title">Dinner</span></li>
+      <li class="session-row">
+        <div class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Zoe Rahwan</span> — Delegating Decisions to AI and Dishonest Behaviour</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Talk</span><span class="tag">MPIB</span></div>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Anastasia Kozyreva</span> — Free Speech vs. Harmful Misinformation: The Psychology and Politics of Online Speech Governance</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Talk</span><span class="tag">MPIB</span></div>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">14:00–16:00</span><span class="title"><span class="speaker">Mario Scharfbillig</span> — Fractured Reality: How Democracy Can Win the Global Struggle Over the Information Space</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Talk</span><span class="tag">Guest speaker</span></div>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">16:30–18:00</span><span class="title"><span class="meta-tag">Hero of Science</span><span class="speaker">Renée DiResta</span> — The Hero of Science: Integrity in the Age of Information Warfare</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Keynote · Hero of Science</span><span class="tag">Guest speaker</span></div>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">18:30–20:00</span><span class="title">Dinner</span></div>
+      </li>
     </ul>
   </section>
 
   <section class="day">
     <div class="day-header">Tuesday, 16 June</div>
     <ul class="sessions">
-      <li class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Gerd Gigerenzer</span> — Paper Mills: On AI Pollution of the Research Field</span></li>
-      <li class="session"><span class="time">11:30–13:00</span><span class="title">Project Presentations</span></li>
-      <li class="session"><span class="time">14:00–16:00</span><span class="title">Closing Session</span></li>
+      <li class="session-row">
+        <div class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Gerd Gigerenzer</span> — Paper Mills: On AI Pollution of the Research Field</span></div>
+        <details class="session-details">
+          <summary>More details</summary>
+          <div class="details-body">
+            <div class="tags"><span class="tag">Talk</span><span class="tag">MPIB · Director</span></div>
+            <p class="placeholder">Abstract, readings, and bio — to be added.</p>
+          </div>
+        </details>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">11:30–13:00</span><span class="title">Project Presentations</span></div>
+      </li>
+      <li class="session-row">
+        <div class="session"><span class="time">14:00–16:00</span><span class="title">Closing Session</span></div>
+      </li>
     </ul>
   </section>
 
-  <footer>SIBR 2026</footer>
+  <footer>SIBR 2026 · Max Planck Institute for Human Development</footer>
 </div>
 </body>
 </html>
