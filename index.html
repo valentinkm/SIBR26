@@ -43,7 +43,33 @@
     letter-spacing: -0.01em;
     line-height: 1.15;
   }
-  .subtitle { color: var(--muted); font-size: 0.98rem; margin: 0; }
+  .subtitle {
+    color: var(--ink);
+    font-size: 1.05rem;
+    margin: 0 0 4px;
+    min-height: 1.4em;
+    line-height: 1.4;
+  }
+  .typewriter {
+    display: inline;
+    white-space: pre;
+  }
+  #typed { color: var(--ink); }
+  #ghost { color: var(--muted); opacity: 0.55; }
+  .cursor {
+    display: inline-block;
+    width: 1.5px;
+    height: 1em;
+    background: var(--accent);
+    vertical-align: -2px;
+    margin: 0 1px;
+    animation: blink 1s steps(1, end) infinite;
+  }
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    50.01%, 100% { opacity: 0; }
+  }
+  .meta { color: var(--muted); font-size: 0.9rem; margin: 0; }
   @media (max-width: 560px) {
     header.intro { gap: 16px; }
     header.intro .logo { width: 64px; height: 64px; }
@@ -214,7 +240,8 @@
     <img class="logo" src="logo.png" alt="SIBR 2026 logo">
     <div class="titles">
       <h1>Summer Institute on Bounded Rationality</h1>
-      <p class="subtitle">Decision Making in the Age of AI · 8–16 June 2026 · Max Planck Institute for Human Development, Berlin</p>
+      <p class="subtitle"><span class="typewriter"><span id="typed"></span><span class="cursor"></span><span id="ghost"></span></span></p>
+      <p class="meta">8–16 June 2026 · Max Planck Institute for Human Development, Berlin</p>
     </div>
   </header>
 
@@ -560,5 +587,41 @@
 
   <footer>SIBR 2026 · Max Planck Institute for Human Development</footer>
 </div>
+<script>
+(function () {
+  const FULL = "Decision Making in the Age of AI";
+  const typed = document.getElementById('typed');
+  const ghost = document.getElementById('ghost');
+  if (!typed || !ghost) return;
+
+  const TYPE_MIN = 55, TYPE_JITTER = 70;
+  const HOLD_AFTER_TYPED = 2400;
+  const HOLD_BEFORE_RESTART = 700;
+
+  function setState(i) {
+    typed.textContent = FULL.slice(0, i);
+    ghost.textContent = FULL.slice(i);
+  }
+
+  function typeLoop() {
+    let i = 0;
+    setState(0);
+    function step() {
+      if (i < FULL.length) {
+        i++;
+        setState(i);
+        setTimeout(step, TYPE_MIN + Math.random() * TYPE_JITTER);
+      } else {
+        setTimeout(() => {
+          setState(0);
+          setTimeout(typeLoop, HOLD_BEFORE_RESTART);
+        }, HOLD_AFTER_TYPED);
+      }
+    }
+    step();
+  }
+  typeLoop();
+})();
+</script>
 </body>
 </html>
