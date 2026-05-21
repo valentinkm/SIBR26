@@ -75,28 +75,6 @@
     0%, 50% { opacity: 1; }
     50.01%, 100% { opacity: 0; }
   }
-  .tab-hint {
-    display: inline-block;
-    margin-left: 10px;
-    padding: 1px 8px;
-    font-size: 0.72rem;
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    color: var(--muted);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    background: var(--tag-bg);
-    opacity: 0;
-    transform: translateY(-1px);
-    transition: opacity 0.25s ease, transform 0.1s ease, background 0.1s ease, color 0.1s ease;
-    vertical-align: middle;
-  }
-  .tab-hint.show { opacity: 1; }
-  .tab-hint.pressed {
-    transform: translateY(1px) scale(0.95);
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-  }
   .meta { color: var(--muted); font-size: 0.9rem; margin: 0; }
   @media (max-width: 560px) {
     header.intro { gap: 16px; }
@@ -268,7 +246,7 @@
     <img class="logo" src="logo.png" alt="SIBR 2026 logo">
     <div class="titles">
       <h1>Summer Institute on Bounded Rationality</h1>
-      <p class="subtitle"><span class="typewriter"><span id="typed"></span><span class="cursor"></span><span id="ghost"></span><span class="tab-hint" id="tab-hint">Tab ↹</span></span></p>
+      <p class="subtitle"><span class="typewriter"><span id="typed"></span><span class="cursor" id="cursor"></span><span id="ghost"></span></span></p>
       <p class="meta">8–16 June 2026 · Max Planck Institute for Human Development, Berlin</p>
     </div>
   </header>
@@ -621,13 +599,12 @@
   const SUGGESTION = " in the Age of AI";
   const typed = document.getElementById('typed');
   const ghost = document.getElementById('ghost');
-  const tabHint = document.getElementById('tab-hint');
-  if (!typed || !ghost || !tabHint) return;
+  const cursor = document.getElementById('cursor');
+  if (!typed || !ghost || !cursor) return;
 
   const TYPE_MIN = 60, TYPE_JITTER = 80;
   const PAUSE_BEFORE_SUGGESTION = 350;
-  const PAUSE_BEFORE_TAB = 700;
-  const TAB_PRESS_HOLD = 160;
+  const PAUSE_BEFORE_ACCEPT = 950;
 
   function typePrefix(i) {
     typed.textContent = PREFIX.slice(0, i);
@@ -641,24 +618,14 @@
   function showSuggestion() {
     ghost.textContent = SUGGESTION;
     requestAnimationFrame(() => ghost.classList.add('show'));
-    setTimeout(showTabHint, 250);
-  }
-
-  function showTabHint() {
-    tabHint.classList.add('show');
-    setTimeout(pressTab, PAUSE_BEFORE_TAB);
-  }
-
-  function pressTab() {
-    tabHint.classList.add('pressed');
-    setTimeout(acceptSuggestion, TAB_PRESS_HOLD);
+    setTimeout(acceptSuggestion, PAUSE_BEFORE_ACCEPT);
   }
 
   function acceptSuggestion() {
+    // Move the cursor to the end and recolor the suggestion in one frame —
+    // looks like a Tab-accept: cursor jumps, ghost goes white.
     ghost.classList.add('accepted');
-    setTimeout(() => {
-      tabHint.classList.remove('show', 'pressed');
-    }, 300);
+    ghost.parentNode.appendChild(cursor);
   }
 
   typePrefix(0);
