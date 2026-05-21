@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIBR 2026 — Schedule</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --panel: #ffffff;
+    --ink: #1a1a1a;
+    --muted: #6b6b6b;
+    --line: #e5e5e5;
+    --accent: #1f4e78;
+    --accent-soft: #eaf1f8;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 48px 24px 96px; }
+  header { margin-bottom: 40px; }
+  h1 {
+    font-size: 2.1rem;
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+  }
+  .subtitle { color: var(--muted); font-size: 1rem; margin: 0; }
+  .day {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .day-header {
+    padding: 14px 20px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.05rem;
+    letter-spacing: 0.01em;
+  }
+  .day-empty .day-header { background: #9aa3ad; }
+  .sessions { list-style: none; margin: 0; padding: 0; }
+  .session {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 18px;
+    padding: 14px 20px;
+    border-top: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .session:first-child { border-top: none; }
+  .time {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    font-size: 0.92rem;
+    white-space: nowrap;
+  }
+  .title { font-size: 0.98rem; }
+  .speaker { font-weight: 600; }
+  .talk { color: var(--ink); }
+  .meta-tag {
+    display: inline-block;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .free-day {
+    padding: 14px 20px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  footer {
+    margin-top: 48px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  @media (max-width: 560px) {
+    .session { grid-template-columns: 1fr; gap: 4px; }
+    .time { font-size: 0.85rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>SIBR 2026 — Schedule</h1>
+    <p class="subtitle">8–16 June 2026</p>
+  </header>
+
+  <section class="day">
+    <div class="day-header">Monday, 8 June</div>
+    <ul class="sessions">
+      <li class="session"><span class="time">16:30–18:00</span><span class="title">Registration / Introduction</span></li>
+      <li class="session"><span class="time">18:30–20:00</span><span class="title">Institute Tour / Drinks</span></li>
+    </ul>
+  </section>
+
+  <section class="day">
+    <div class="day-header">Tuesday, 9 June</div>
+    <ul class="sessions">
+      <li class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Ralph Hertwig</span> — What is Bounded Rationality</span></li>
+      <li class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Konstantinos Katsikopoulos</span> — Operationalizing Bounded Rationality</span></li>
+      <li class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Özgür Şimşek</span> — Fast and Frugal Trees</span></li>
+      <li class="session"><span class="time">16:30–18:00</span><span class="title">Speed Talks and Poster Session</span></li>
+    </ul>
+  </section>
+
+  <section class="day">
+    <div class="day-header">Wednesday, 10 June</div>
+    <ul class="sessions">
+      <li class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Peter M. Todd</span> — Simple Heuristics for Search</span></li>
+      <li class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Tomás Lejarraga</span> — How Experimental Methods Shaped Views on Human Competence and Rationality</span></li>
+      <li class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Shahar Hechtlinger</span> — How People Make Important Decisions</span></li>
+      <li class="session"><span class="time">16:30–18:00</span><span class="title"><span class="meta-tag">Q&amp;A</span>Ralph Hertwig and Peter M. Todd</span></li>
+    </ul>
+  </section>
+
+  <section class="day">
+    <div class="day-header">Thursday, 11 June</div>
+    <ul class="sessions">
+      <li class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Kamil Fulawka</span> — Decoding Boundedly Rational Decisions Leveraging Large Language Models</span></li>
+      <li class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Levin Brinkmann</span> — When Machines Expand Human Problem-Solving</span></li>
+      <li class="session"><span class="time">14:00–16:00</span><span class="title">Speed Talks and Poster Session</span></li>
+      <li class="session"><span class="time">16:30–18:00</span><span class="title"><span class="meta-tag">Keynote</span><span class="speaker">Krishna Gummadi</span> — Heuristics in Agentic AI</span></li>
+      <li class="session"><span class="time">18:30–20:00</span><span class="title">BBQ</span></li>
+    </ul>
+  </section>
+
+  <section class="day">
+    <div class="day-header">Friday, 12 June</div>
+    <ul class="sessions">
+      <li class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Rui Mata</span> — Advancing Cognitive Science with LLMs</span></li>
+      <li class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Dirk Wulff</span> — Increasing Conceptual Clarity in Psychology with LLMs</span></li>
+      <li class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Raluca Rilla</span> — Recognising and Mitigating LLM Pollution</span></li>
+      <li class="session"><span class="time">16:30–18:00</span><span class="title">Project Discussion</span></li>
+    </ul>
+  </section>
+
+  <section class="day">
+    <div class="day-header">Saturday, 13 June</div>
+    <ul class="sessions">
+      <li class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Jason Burton</span> — How Large Language Models Can Reshape Collective Intelligence</span></li>
+      <li class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Nikolas Zöller</span> — Human–AI Collectives</span></li>
+      <li class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Stefan Herzog &amp; Julian Berger</span> — Hybrid Intelligence</span></li>
+      <li class="session"><span class="time">16:30–18:00</span><span class="title">Project Discussion</span></li>
+    </ul>
+  </section>
+
+  <section class="day day-empty">
+    <div class="day-header">Sunday, 14 June</div>
+    <div class="free-day">Free day</div>
+  </section>
+
+  <section class="day">
+    <div class="day-header">Monday, 15 June</div>
+    <ul class="sessions">
+      <li class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Zoe Rahwan</span> — Delegating Decisions to AI and Dishonest Behaviour</span></li>
+      <li class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Anastasia Kozyreva</span> — Free Speech vs. Harmful Misinformation: The Psychology and Politics of Online Speech Governance</span></li>
+      <li class="session"><span class="time">14:00–16:00</span><span class="title"><span class="speaker">Mario Scharfbillig</span> — Fractured Reality: How Democracy Can Win the Global Struggle Over the Information Space</span></li>
+      <li class="session"><span class="time">16:30–18:00</span><span class="title"><span class="speaker">Renée DiResta</span> — The Hero of Science: Integrity in the Age of Information Warfare</span></li>
+      <li class="session"><span class="time">18:30–20:00</span><span class="title">Dinner</span></li>
+    </ul>
+  </section>
+
+  <section class="day">
+    <div class="day-header">Tuesday, 16 June</div>
+    <ul class="sessions">
+      <li class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Gerd Gigerenzer</span> — Paper Mills: On AI Pollution of the Research Field</span></li>
+      <li class="session"><span class="time">11:30–13:00</span><span class="title">Project Presentations</span></li>
+      <li class="session"><span class="time">14:00–16:00</span><span class="title">Closing Session</span></li>
+    </ul>
+  </section>
+
+  <footer>SIBR 2026</footer>
+</div>
+</body>
+</html>
