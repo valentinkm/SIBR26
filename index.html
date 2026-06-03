@@ -34,7 +34,7 @@
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 980px; margin: 0 auto; padding: 48px 24px 96px; }
+  .wrap { max-width: none; margin: 0 auto; padding: 48px 32px 96px; }
   header.intro {
     display: flex;
     align-items: center;
@@ -173,6 +173,7 @@
   .details-body .tags {
     margin-bottom: 10px;
   }
+  .details-body p { max-width: 80ch; }
   .tag {
     display: inline-block;
     font-size: 0.75rem;
@@ -216,6 +217,7 @@
     margin: 8px 0 0;
     font-size: 0.95rem;
     color: var(--ink);
+    max-width: 80ch;
   }
   details.organizer-details > summary {
     list-style: none;
@@ -249,6 +251,103 @@
     details.session-details > summary,
     .details-body { padding-left: 20px; }
   }
+  @media (max-width: 640px) {
+    .wrap { padding-left: 16px; padding-right: 16px; }
+  }
+  .schedule-overview { margin: 0 0 28px; }
+  .schedule-overview h2 {
+    font-size: 1.15rem;
+    margin: 0 0 12px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .schedule-overview .hint {
+    color: var(--muted);
+    font-size: 0.82rem;
+    margin: 0 0 12px;
+  }
+  .schedule-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    -webkit-overflow-scrolling: touch;
+  }
+  table.week {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 940px;
+    font-size: 0.8rem;
+  }
+  table.week th, table.week td {
+    border: 1px solid var(--line);
+    padding: 8px 9px;
+    vertical-align: top;
+    text-align: left;
+  }
+  table.week thead th {
+    background: var(--accent-deep);
+    color: #f0f6ff;
+    font-weight: 600;
+    white-space: nowrap;
+    text-align: center;
+  }
+  table.week thead th .wd { display: block; }
+  table.week thead th .dn { display: block; font-weight: 400; font-size: 0.74rem; opacity: 0.85; }
+  table.week th.time-col, table.week td.time-col {
+    background: var(--panel);
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    white-space: nowrap;
+    font-size: 0.76rem;
+    text-align: left;
+  }
+  table.week td b {
+    color: var(--ink);
+    font-weight: 600;
+    display: block;
+  }
+  table.week td .t-title {
+    color: var(--muted);
+    display: block;
+    margin-top: 2px;
+    line-height: 1.3;
+  }
+  table.week td .t-label {
+    display: inline-block;
+    font-size: 0.64rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-bottom: 4px;
+  }
+  table.week td.session-fixed { color: var(--ink); }
+  table.week td.free {
+    background: var(--accent-soft);
+    color: var(--muted);
+    font-style: italic;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  table.week td a {
+    display: block;
+    margin: -8px -9px;
+    padding: 8px 9px;
+    color: inherit;
+    text-decoration: none;
+  }
+  table.week td a:hover { background: var(--accent-soft); }
+  table.week td a:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .session-row { scroll-margin-top: 16px; }
+  .session-row.flash { animation: rowflash 1.6s ease; }
+  @keyframes rowflash {
+    0% { background: var(--accent-soft); }
+    100% { background: transparent; }
+  }
 </style>
 </head>
 <body>
@@ -263,13 +362,94 @@
     </div>
   </header>
 
+  <section class="schedule-overview">
+    <h2>Schedule overview</h2>
+    <p class="hint">The week at a glance. Scroll across days; see each session in full below.</p>
+    <div class="schedule-scroll">
+      <table class="week">
+        <thead>
+          <tr>
+            <th class="time-col"></th>
+            <th><span class="wd">Mon</span><span class="dn">8 Jun</span></th>
+            <th><span class="wd">Tue</span><span class="dn">9 Jun</span></th>
+            <th><span class="wd">Wed</span><span class="dn">10 Jun</span></th>
+            <th><span class="wd">Thu</span><span class="dn">11 Jun</span></th>
+            <th><span class="wd">Fri</span><span class="dn">12 Jun</span></th>
+            <th><span class="wd">Sat</span><span class="dn">13 Jun</span></th>
+            <th><span class="wd">Sun</span><span class="dn">14 Jun</span></th>
+            <th><span class="wd">Mon</span><span class="dn">15 Jun</span></th>
+            <th><span class="wd">Tue</span><span class="dn">16 Jun</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="time-col">09:10–<br>11:00</td>
+            <td></td>
+            <td><a href="#s-9-0910"><b>Ralph Hertwig</b><span class="t-title">The ABCs of Bounded Rationality: Adaptive Rules for an Uncertain World</span></a></td>
+            <td><a href="#s-10-0910"><b>Peter M. Todd</b><span class="t-title">Foraging in Mind, with Heuristics and AI Collaborators</span></a></td>
+            <td><a href="#s-11-0910"><b>Kamil Fulawka</b><span class="t-title">Large Language Models Accurately Identify Decision Reasons in Verbal Reports</span></a></td>
+            <td><a href="#s-12-0910"><b>Rui Mata</b><span class="t-title">Advancing Cognitive Science with Language Models</span></a></td>
+            <td><a href="#s-13-0910"><b>Jason Burton</b><span class="t-title">How Large Language Models Can Reshape Collective Intelligence</span></a></td>
+            <td class="free" rowspan="5">Enjoy your<br>day off!</td>
+            <td><a href="#s-15-0910"><b>Zoe Rahwan</b><span class="t-title">How Delegating Decisions to AI Can Shape Dishonesty</span></a></td>
+            <td><a href="#s-16-0910"><b>Gerd Gigerenzer</b><span class="t-title">On AI-Pollution: Will AI Contaminate Science?</span></a></td>
+          </tr>
+          <tr>
+            <td class="time-col">11:30–<br>13:00</td>
+            <td></td>
+            <td><a href="#s-9-1130"><b>Konstantinos Katsikopoulos</b><span class="t-title">Operationalizing Bounded Rationality</span></a></td>
+            <td><a href="#s-10-1130"><b>Tomás Lejarraga</b><span class="t-title">How Experimental Methods Shaped Views on Human Competence and Rationality</span></a></td>
+            <td><a href="#s-11-1130"><b>Levin Brinkmann</b><span class="t-title">When Machines Expand Human Problem-Solving</span></a></td>
+            <td><a href="#s-12-1130"><b>Dirk Wulff</b><span class="t-title">Increasing Conceptual Clarity in Psychology with LLMs</span></a></td>
+            <td><a href="#s-13-1130"><b>Nikolas Zöller</b><span class="t-title">Improving Medical Diagnosis with Human-AI Collectives</span></a></td>
+            <td><a href="#s-15-1130"><b>Anastasia Kozyreva</b><span class="t-title">Free Speech vs. Harmful Misinformation: The Psychology and Politics of Online Speech Governance</span></a></td>
+            <td class="session-fixed"><a href="#s-16-1130">Project Presentations</a></td>
+          </tr>
+          <tr>
+            <td class="time-col">14:00–<br>16:00</td>
+            <td></td>
+            <td><a href="#s-9-1400"><span class="t-label">Workshop</span><b>Özgür Şimşek</b><span class="t-title">Classification in the Wild</span></a></td>
+            <td><a href="#s-10-1400"><span class="t-label">Workshop</span><b>Shahar Hechtlinger</b><span class="t-title">How People Make Life’s Most Important Decisions</span></a></td>
+            <td class="session-fixed"><a href="#s-11-1400">Speed Talks and Poster Session</a></td>
+            <td><a href="#s-12-1400"><span class="t-label">Workshop</span><b>Raluca Rilla &amp; Dirk Wulff</b><span class="t-title">Detecting and Preventing LLM Pollution in Online Studies</span></a></td>
+            <td><a href="#s-13-1400"><span class="t-label">Workshop</span><b>Julian Berger &amp; Stefan Herzog</b><span class="t-title">Learning in Human-AI Interaction: Boosting vs. Handicapping Human Competences</span></a></td>
+            <td><a href="#s-15-1400"><b>Mario Scharfbillig</b><span class="t-title">Fractured Reality – How Democracy Can Win the Global Struggle Over the Information Space</span></a></td>
+            <td class="session-fixed"><a href="#s-16-1400">Closing Session</a></td>
+          </tr>
+          <tr>
+            <td class="time-col">16:30–<br>18:00</td>
+            <td class="session-fixed"><a href="#s-8-1630">Registration / Introduction</a></td>
+            <td class="session-fixed"><a href="#s-9-1630">Speed Talks and Poster Session</a></td>
+            <td class="session-fixed"><a href="#s-10-1630"><span class="t-label">Q&amp;A</span>Ralph Hertwig and Peter M. Todd</a></td>
+            <td><a href="#s-11-1630"><span class="t-label">Keynote</span><b>Krishna Gummadi</b><span class="t-title">Engineering the Psychology of Machine Judgment Under Uncertainty</span></a></td>
+            <td class="session-fixed"><a href="#s-12-1630">Project Discussion</a></td>
+            <td class="session-fixed"><a href="#s-13-1630">Project Discussion</a></td>
+            <td><a href="#s-15-1630"><span class="t-label">Hero of Science</span><b>Renée DiResta</b><span class="t-title">Invisible Rulers, Visible Costs: Propaganda, AI, and the Fight for Shared Reality</span></a></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="time-col">18:30–<br>20:00</td>
+            <td class="session-fixed"><a href="#s-8-1830">Institute Tour / Drinks</a></td>
+            <td></td>
+            <td></td>
+            <td class="session-fixed"><a href="#s-11-1830">BBQ</a></td>
+            <td></td>
+            <td></td>
+            <td class="session-fixed"><a href="#s-15-1830">Dinner</a></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="day">
     <div class="day-header">Monday, 8 June</div>
     <ul class="sessions">
-      <li class="session-row">
+      <li class="session-row" id="s-8-1630">
         <div class="session"><span class="time">16:30–18:00</span><span class="title">Registration / Introduction</span></div>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-8-1830">
         <div class="session"><span class="time">18:30–20:00</span><span class="title">Institute Tour / Drinks</span></div>
       </li>
     </ul>
@@ -278,7 +458,7 @@
   <section class="day">
     <div class="day-header">Tuesday, 9 June</div>
     <ul class="sessions">
-      <li class="session-row">
+      <li class="session-row" id="s-9-0910">
         <div class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Ralph Hertwig</span> — The ABCs of Bounded Rationality: Adaptive Rules for an Uncertain World</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -289,7 +469,7 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-9-1130">
         <div class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Konstantinos Katsikopoulos</span> — Operationalizing Bounded Rationality</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -300,7 +480,7 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-9-1400">
         <div class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Özgür Şimşek</span> — Classification in the Wild</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -311,7 +491,7 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-9-1630">
         <div class="session"><span class="time">16:30–18:00</span><span class="title">Speed Talks and Poster Session</span></div>
       </li>
     </ul>
@@ -320,7 +500,7 @@
   <section class="day">
     <div class="day-header">Wednesday, 10 June</div>
     <ul class="sessions">
-      <li class="session-row">
+      <li class="session-row" id="s-10-0910">
         <div class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Peter M. Todd</span> — Foraging in Mind, with Heuristics and AI Collaborators</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -331,7 +511,7 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-10-1130">
         <div class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Tomás Lejarraga</span> — How experimental methods shaped views on human competence and rationality.</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -342,7 +522,7 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-10-1400">
         <div class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Shahar Hechtlinger</span> — How people make life’s most important decisions</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -353,7 +533,7 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-10-1630">
         <div class="session"><span class="time">16:30–18:00</span><span class="title"><span class="meta-tag">Q&amp;A</span>Ralph Hertwig and Peter M. Todd</span></div>
       </li>
     </ul>
@@ -362,7 +542,7 @@
   <section class="day">
     <div class="day-header">Thursday, 11 June</div>
     <ul class="sessions">
-      <li class="session-row">
+      <li class="session-row" id="s-11-0910">
         <div class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Kamil Fulawka</span> — Large language models accurately identify decision reasons in verbal reports</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -373,7 +553,7 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-11-1130">
         <div class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Levin Brinkmann</span> — When Machines Expand Human Problem-Solving</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -387,10 +567,10 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-11-1400">
         <div class="session"><span class="time">14:00–16:00</span><span class="title">Speed Talks and Poster Session</span></div>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-11-1630">
         <div class="session"><span class="time">16:30–18:00</span><span class="title"><span class="meta-tag">Keynote</span><span class="speaker">Krishna Gummadi</span> — Engineering the Psychology of Machine Judgment Under Uncertainty</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -401,7 +581,7 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-11-1830">
         <div class="session"><span class="time">18:30–20:00</span><span class="title">BBQ</span></div>
       </li>
     </ul>
@@ -410,7 +590,7 @@
   <section class="day">
     <div class="day-header">Friday, 12 June</div>
     <ul class="sessions">
-      <li class="session-row">
+      <li class="session-row" id="s-12-0910">
         <div class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Rui Mata</span> — Advancing Cognitive Science with Language Models</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -421,7 +601,7 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-12-1130">
         <div class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Dirk Wulff</span> — Increasing Conceptual Clarity in Psychology with LLMs</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -432,18 +612,19 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
-        <div class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Raluca Rilla</span> — Detecting and Preventing LLM Pollution in Online Studies</span></div>
+      <li class="session-row" id="s-12-1400">
+        <div class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Raluca Rilla &amp; Dirk Wulff</span> — Detecting and Preventing LLM Pollution in Online Studies</span></div>
         <details class="session-details">
           <summary>More details</summary>
           <div class="details-body">
             <div class="tags"><span class="tag">Workshop</span><span class="tag">MPIB</span></div>
             <p><strong>Abstract.</strong> A substantial and growing share of online study responses reflects the influence of Large Language Models (LLMs). LLM-assisted responses pose a more serious threat because their convincing output can reshape response distributions in harmful ways. We term this phenomenon "LLM Pollution," composed of three parts: Partial LLM Mediation, Full LLM Delegation, and LLM Spillover, capturing the spectrum from participants using models to polish their answers, to agentic systems completing studies autonomously, to behavioural shifts among participants who suspect AI involvement. Because these forms vary in technical sophistication and human oversight, no single detection measure is sufficient. We will begin the workshop with a more detailed look into the LLM Pollution framework. Participants will then experience the capabilities of current agentic systems by deploying a simple browser-based agent to complete an online study (no prior experience with agents is needed). From there, participants will (i) develop in-survey measures for detecting LLM agents and LLM-assisted responses, and (ii) reflect on broader steps the research community must take to address this growing threat. We will conclude by synthesizing insights across groups and discussing the path forward.</p>
             <p><strong>Bio.</strong> Raluca Rilla is a doctoral student at the Center for Humans and Machines at the Max Planck Institute for Human Development through the International Max Planck Research School on Learning, Institutions, and Future Evolution, supervised by Prof. Dr. Iyad Rahwan. She holds an MSc in Cognitive Systems from the University of Potsdam and a BA in Cognitive Science and Psychology from Franklin &amp; Marshall College. Her research examines how human behaviour evolves as AI systems become embedded in decision-making environments, with a particular interest in how sustained interaction with these technologies can reshape social and ethical norms. This focus extends to the integrity of the research process, where Raluca investigates how both the autonomous participation of agentic AI and human use of LLMs in surveys can result in misleading scientific conclusions.</p>
+            <p>Dirk U. Wulff is a senior research scientist at the Max Planck Institute for Human Development in Berlin, where he works in the Center for Adaptive Rationality and leads the ‘Learning’ Research Area. A psychologist by training, he bridges cognitive science and artificial intelligence, using computational methods to understand learning, mental representations, and decision-making in both humans and artificial agents.</p>
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-12-1630">
         <div class="session"><span class="time">16:30–18:00</span><span class="title">Project Discussion</span></div>
       </li>
     </ul>
@@ -452,7 +633,7 @@
   <section class="day">
     <div class="day-header">Saturday, 13 June</div>
     <ul class="sessions">
-      <li class="session-row">
+      <li class="session-row" id="s-13-0910">
         <div class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Jason Burton</span> — How large language models can reshape collective intelligence</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -463,7 +644,7 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-13-1130">
         <div class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Nikolas Zöller</span> — Improving Medical Diagnosis with Human-AI Collectives</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -474,20 +655,20 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
-        <div class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Stefan Herzog &amp; Julian Berger</span> — Learning in human-AI interaction: Boosting vs. handicapping human competences</span></div>
+      <li class="session-row" id="s-13-1400">
+        <div class="session"><span class="time">14:00–16:00</span><span class="title"><span class="meta-tag">Workshop</span><span class="speaker">Julian Berger &amp; Stefan Herzog</span> — Learning in human-AI interaction: Boosting vs. handicapping human competences</span></div>
         <details class="session-details">
           <summary>More details</summary>
           <div class="details-body">
             <div class="tags"><span class="tag">Workshop</span><span class="tag">MPIB</span></div>
             <p><strong>Abstract.</strong> Much attention in research and public discourse focuses on artificial intelligence and machine learning, while human learning remains an understudied aspect of human-AI interaction. In a recent meta-analysis (Berger et al., 2026), we found that only a minority of human-AI interaction studies allowed participants to learn from outcome feedback---meaning most participants could neither track their own or the AI's performance nor learn when and how to adaptively rely on AI. It is thus in our view unsurprising that, on average, humans with AI advice underperform relative to the AI alone. In contrast, our meta-analysis shows that humans tend to outperform AI when study designs allow for learning.</p>
             <p>In this workshop, we present our perspective on the unsatisfying state of the human-AI interaction literature and the paradigm shift needed to achieve the promise of human-AI synergy (i.e., humans with AI achieving superior outcomes compared to either acting alone). We argue for a research approach that fosters rather than handicaps human learning, and that can reveal the mechanisms that foster human-AI synergy. We present recent evidence for learning as a key driver of human-AI synergy (Berger et al., 2026\) and, through a series of short interactive exercises, demonstrate the boundary conditions such as task predictability, feedback clarity, and delay that shape the effectiveness of offering learning opportunities. The workshop aims to advance a perspective on human-AI interaction design that prioritizes boosting human competences (Herzog &amp; Franklin, 2024).</p>
-            <p><strong>Bio.</strong> Stefan Herzog (<a href="http://stefanherzog.org">stefanherzog.org</a>) is head of the “Boosting Decision Making” research area (<a href="http://scienceofboosting.org">scienceofboosting.org</a>) and senior researcher at the Center for Adaptive Rationality at the Max Planck Institute for Human Development in Berlin. He studies how to improve human judgment and decision making by investigating human and machine behavior. His work combines insights and methods from cognitive science, heuristics, AI, hybrid collective intelligence, and behavioral public policy. He also works on applications in online environments and in hybrid human–AI medical diagnostics. His research has been published in leading journals, featured in Science and Scientific American, and covered in books like Superforecasting. He received the Hillel Einhorn New Investigator Award in 2010 and holds a doctorate in psychology from the University of Basel.</p>
-            <p>Julian is a postdoctoral researcher in the Strategic Organization Design group at the University of Southern Denmark and starts as an Assistant Professor of Management at the Universitat Pompeu Fabra in September. He studies the combination of human and artificial decision making capabilities, ranging from simple models built with tabular data to more complex models for processing images and language. Psychologist by day, computer scientist by night, Julian is looking forward to the day he can offload his tax declaration to AI but thinks we should remain cognitively independent and vigilant of deskilling ourselves in the meantime.</p>
+            <p><strong>Bio.</strong> Julian is a postdoctoral researcher in the Strategic Organization Design group at the University of Southern Denmark and starts as an Assistant Professor of Management at the Universitat Pompeu Fabra in September. He studies the combination of human and artificial decision making capabilities, ranging from simple models built with tabular data to more complex models for processing images and language. Psychologist by day, computer scientist by night, Julian is looking forward to the day he can offload his tax declaration to AI but thinks we should remain cognitively independent and vigilant of deskilling ourselves in the meantime.</p>
+            <p>Stefan Herzog (<a href="http://stefanherzog.org">stefanherzog.org</a>) is head of the “Boosting Decision Making” research area (<a href="http://scienceofboosting.org">scienceofboosting.org</a>) and senior researcher at the Center for Adaptive Rationality at the Max Planck Institute for Human Development in Berlin. He studies how to improve human judgment and decision making by investigating human and machine behavior. His work combines insights and methods from cognitive science, heuristics, AI, hybrid collective intelligence, and behavioral public policy. He also works on applications in online environments and in hybrid human–AI medical diagnostics. His research has been published in leading journals, featured in Science and Scientific American, and covered in books like Superforecasting. He received the Hillel Einhorn New Investigator Award in 2010 and holds a doctorate in psychology from the University of Basel.</p>
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-13-1630">
         <div class="session"><span class="time">16:30–18:00</span><span class="title">Project Discussion</span></div>
       </li>
     </ul>
@@ -501,7 +682,7 @@
   <section class="day">
     <div class="day-header">Monday, 15 June</div>
     <ul class="sessions">
-      <li class="session-row">
+      <li class="session-row" id="s-15-0910">
         <div class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Zoe Rahwan</span> — How delegating decisions to AI can shape dishonesty</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -514,7 +695,7 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-15-1130">
         <div class="session"><span class="time">11:30–13:00</span><span class="title"><span class="speaker">Anastasia Kozyreva</span> — Free Speech vs. Harmful Misinformation: The Psychology and Politics of Online Speech Governance</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -525,7 +706,7 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-15-1400">
         <div class="session"><span class="time">14:00–16:00</span><span class="title"><span class="speaker">Mario Scharfbillig</span> — Fractured reality – How democracy can win the global struggle over the information space</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -536,7 +717,7 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-15-1630">
         <div class="session"><span class="time">16:30–18:00</span><span class="title"><span class="meta-tag">Hero of Science</span><span class="speaker">Renée DiResta</span> — Invisible Rulers, Visible Costs: Propaganda, AI, and the Fight for Shared Reality</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -547,7 +728,7 @@
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-15-1830">
         <div class="session"><span class="time">18:30–20:00</span><span class="title">Dinner</span></div>
       </li>
     </ul>
@@ -556,7 +737,7 @@
   <section class="day">
     <div class="day-header">Tuesday, 16 June</div>
     <ul class="sessions">
-      <li class="session-row">
+      <li class="session-row" id="s-16-0910">
         <div class="session"><span class="time">09:10–11:00</span><span class="title"><span class="speaker">Gerd Gigerenzer</span> — On AI-Pollution: Will AI contaminate science?</span></div>
         <details class="session-details">
           <summary>More details</summary>
@@ -564,14 +745,14 @@
             <div class="tags"><span class="tag">Talk</span><span class="tag">MPIB</span></div>
             <p><strong>Abstract.</strong> AI is celebrated as a disruptive technology. It is now beginning to disrupt science itself — and not for the better. I draw on my experience as Vice-President of the European Research Council (ERC) and on my research on paper mills. The ERC permits researchers to use large language models (LLMs) to write proposals, but forbids reviewers from using them to write evaluations. The second rule is increasingly ignored; the first has brought the ERC close to collapse. In 2025, submissions to ERC calls rose by an unprecedented 30–40% over 2024, largely driven by the use of LLMs. This mass production of proposals creates an intolerable burden on reviewers, and a predictable decline in the quality of peer review and funding decisions. Similar surges are being reported by other funding agencies and in AI conference submissions.</p>
             <p>The problem does not stop there. Paper mills now use LLMs to manufacture articles with fraudulent data at an industrial scale. Researchers under career pressure pay paper mills five-digit sums to be listed as authors on these fake papers in order to improve their metrics. Paper mills, in turn, bribe journal editors with six-digit sums to place these papers in special issues. Gold Open Access has unwittingly helped create this market, much as it has fueled predatory journals and enriched large publishing companies whose business model rewards volume over quality. And every academic who evaluates applicants by counting publications rather than judging their substance becomes, knowingly or not, an accomplice in this contamination of science by commerce. At a time when science is already under political and social attack, this contamination risks destroying something far more valuable than research budgets: public trust in science itself.</p>
-            <p><strong>Bio.</strong> Gerd Gigerenzer, long-time director at the Max Planck Institute for Human Development, is former Professor of Psychology at the University of Chicago and member of the Berlin-Brandenburg Academy of Sciences, the German Academy of Sciences, the American Academy of Arts and Sciences, and the American Philosophical Society. He was awarded honorary doctorates from the University of Basel, the Open University of the Netherlands, and the University of Southampton. Awards include the AAAS Prize for the best article in the behavioural sciences, the German Psychology Award, and the Communicator Award of the German Research Foundation. His award-winning popular books <em>Calculated Risks</em>, <em>Gut Feelings, Risk Savvy, and How To Stay Smart In A Smart World</em>  have been translated into more than 20 languages. He has trained U.S. federal judges, physicians, and top managers in decision-making. The Swiss Duttweiler Institute has distinguished Gigerenzer as one of the top-100 Global Thought Leaders worldwide.</p>
+            <p><strong>Bio.</strong> Gerd Gigerenzer, long-time director at the Max Planck Institute for Human Development, is former Professor of Psychology at the University of Chicago and member of the Berlin-Brandenburg Academy of Sciences, the German Academy of Sciences, the American Academy of Arts and Sciences, and the American Philosophical Society. He was awarded honorary doctorates from the University of Basel, the Open University of the Netherlands, and the University of Southampton. Awards include the AAAS Prize for the best article in the behavioural sciences, the German Psychology Award, and the Communicator Award of the German Research Foundation. His award-winning popular books <em>Calculated Risks</em>, <em>Gut Feelings</em>, <em>Risk Savvy</em>, and <em>How To Stay Smart In A Smart World</em> have been translated into more than 20 languages. He has trained U.S. federal judges, physicians, and top managers in decision-making. The Swiss Duttweiler Institute has distinguished Gigerenzer as one of the top-100 Global Thought Leaders worldwide.</p>
           </div>
         </details>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-16-1130">
         <div class="session"><span class="time">11:30–13:00</span><span class="title">Project Presentations</span></div>
       </li>
-      <li class="session-row">
+      <li class="session-row" id="s-16-1400">
         <div class="session"><span class="time">14:00–16:00</span><span class="title">Closing Session</span></div>
       </li>
     </ul>
@@ -585,7 +766,7 @@
         <a class="org-email" href="mailto:tikhomirova@mpib-berlin.mpg.de">tikhomirova@mpib-berlin.mpg.de</a>
         <details class="organizer-details">
           <summary>Bio</summary>
-          <p class="org-bio">Taisiia is a PhD student at the Center for Adaptive Rationality (ARC) at the Max Planck Institute for Human Development. She first came to ARC as a research assistant and is now continuing her work at the intersection of cognitive science and large language models. Before starting her PhD, she studied computational neuroscience at the Bernstein Center for Computational Neuroscience Berlin. Her research focuses on how psychological and psycholinguistic information is represented in large language models, and what these models can reveal about human-like meaning representations. She is also leading PsychLing-101, a community-driven project that aims to standardize psycholinguistic datasets for reuse in LLM research and cognitive modeling.</p>
+          <p class="org-bio">Taisiia is a PhD student at the Center for Adaptive Rationality (ARC) at the Max Planck Institute for Human Development. She first came to ARC as a research assistant and is now continuing her work at the intersection of cognitive science and large language models. Before starting her PhD, she studied computational neuroscience in Bernstein Center for Computational Neuroscience Berlin. Her research focuses on how psychological and psycholinguistic information is represented in large language models, and what these models can reveal about human-like meaning representations. She is also leading PsychLing-101, a community-driven project that aims to standardize psycholinguistic datasets for reuse in LLM research and cognitive modeling.</p>
         </details>
       </div>
       <div class="organizer">
@@ -593,7 +774,15 @@
         <a class="org-email" href="mailto:kriegmair@mpib-berlin.mpg.de">kriegmair@mpib-berlin.mpg.de</a>
         <details class="organizer-details">
           <summary>Bio</summary>
-          <p class="org-bio">Valentin is a PhD student at the Center for Adaptive Rationality (ARC) at the Max Planck Institute for Human Development. He first came to the Institute as a research assistant in the Formal Methods Group at the Center for Lifespan Psychology, and now works at the intersection of psychological measurement and large language models. Before starting his PhD, he studied Psychology at Humboldt University Berlin. His research focuses on using large language models to represent and compare psychological constructs and the instruments used to measure them, mapping their relations at scale. Alongside this, he investigates how individual language models differ in their behavioral dispositions.</p>
+          <p class="org-bio">Valentin is a PhD student at the Center for Adaptive Rationality (ARC) at the Max Planck Institute for Human Development. He first came to the Institute as a research assistant in the Formal Methods Group at the Center for Lifespan Psychology, and now works at the intersection of psychological measurement and large language models. Before starting his PhD, he studied Psychology at Humboldt-Universität zu Berlin. His research focuses on using large language models to represent and compare psychological constructs and the instruments used to measure them, mapping their relations at scale. Alongside this, he investigates how individual language models differ in their behavioral dispositions.</p>
+        </details>
+      </div>
+      <div class="organizer">
+        <h3 class="org-name">Carolyn Gläsener</h3>
+        <a class="org-email" href="mailto:glaesener@mpib-berlin.mpg.de">glaesener@mpib-berlin.mpg.de</a>
+        <details class="organizer-details">
+          <summary>Bio</summary>
+          <p class="org-bio">Carolyn is a research assistant at the Center for Adaptive Rationality (ARC) at the Max Planck Institute for Human Development. She is currently finishing her Masters degree in Clinical Psychology and Psychotherapy at Freie Universität Berlin. She also works in the sport psychology department at ALBA Berlin.</p>
         </details>
       </div>
     </div>
@@ -637,6 +826,34 @@
   }
 
   typePrefix(0);
+})();
+</script>
+<script>
+(function () {
+  function reveal(id, scroll) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var det = el.querySelector('details.session-details');
+    if (det) det.open = true;
+    if (scroll) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    el.classList.remove('flash');
+    void el.offsetWidth;
+    el.classList.add('flash');
+  }
+  var links = document.querySelectorAll('.week a[href^="#s-"]');
+  for (var i = 0; i < links.length; i++) {
+    links[i].addEventListener('click', function (e) {
+      e.preventDefault();
+      var id = this.getAttribute('href').slice(1);
+      if (history.replaceState) history.replaceState(null, '', '#' + id);
+      else location.hash = id;
+      reveal(id, true);
+    });
+  }
+  if (location.hash.indexOf('#s-') === 0) {
+    var target = location.hash.slice(1);
+    window.addEventListener('load', function () { reveal(target, true); });
+  }
 })();
 </script>
 </body>
