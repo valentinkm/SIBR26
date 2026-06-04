@@ -12,7 +12,6 @@ wires each session's abstract and biography from `speakers.json` at runtime.
 
 The **source code** in this repository — the HTML, CSS, and JavaScript in
 `index.html` — is licensed under the MIT License. See [LICENSE](LICENSE).
-© 2026 Valentin Kriegmair.
 
 The MIT License covers **only the code**. It does not cover the site's content:
 
@@ -30,4 +29,3 @@ removed, please open an issue or contact the organizers.
 ## Credits
 
 - **Logo design:** [Pietro Leonardo Nickl](https://www.mpib-berlin.mpg.de/person/123249/2537)
-- **Site:** Valentin Kriegmair
