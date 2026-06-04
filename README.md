@@ -20,8 +20,6 @@ The MIT License covers **only the code**. It does not cover the site's content:
   reproduced here as part of that program. All rights reserved by the authors.
 - **Logo** (`logo.png`, `Gen4animatedLogo.mp4`) — designed by Pietro Leonardo
   Nickl. © Pietro Leonardo Nickl.
-- The **program booklet PDF** is material of the Max Planck Institute for Human
-  Development and is not published in this repository (it is git-ignored).
 
 If you are an author and would like your abstract or biography amended or
 removed, please open an issue or contact the organizers.
