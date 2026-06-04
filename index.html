@@ -341,7 +341,8 @@
     color: inherit;
     text-decoration: none;
   }
-  table.week td a:hover { background: var(--accent-soft); }
+  /* Highlight the whole cell on hover, not just the text the link wraps. */
+  table.week td:has(a):hover { background: var(--accent-soft); }
   table.week td a:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
   .session-row { scroll-margin-top: 16px; }
   .session-row.flash { animation: rowflash 1.6s ease; }
