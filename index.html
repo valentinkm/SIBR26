@@ -175,6 +175,18 @@
     margin-bottom: 10px;
   }
   .details-body p { max-width: 80ch; }
+  .sp-readings { margin-top: 14px; max-width: 80ch; }
+  .sp-readings > strong { font-size: 0.92rem; }
+  .sp-readings ul { margin: 6px 0 0; padding: 0; list-style: none; }
+  .sp-readings li {
+    font-size: 0.84rem;
+    color: var(--muted);
+    line-height: 1.45;
+    margin-bottom: 8px;
+    padding-left: 1.3em;
+    text-indent: -1.3em;
+  }
+  .sp-readings a { color: var(--link); word-break: break-word; }
   .tag {
     display: inline-block;
     font-size: 0.75rem;
@@ -944,6 +956,18 @@
       return '<p>' + h + '</p>';
     }).join('');
   }
+  function linkify(escaped) {
+    // Turn bare URLs in an already-escaped citation into anchors.
+    return escaped.replace(/(https?:\/\/[^\s<]+[^\s<.,;)])/g, function (u) {
+      return '<a href="' + u + '" target="_blank" rel="noopener">' + u + '</a>';
+    });
+  }
+  function readingsHtml(list) {
+    var items = (list || []).filter(Boolean).map(function (c) {
+      return '<li>' + linkify(escapeHtml(c)) + '</li>';
+    }).join('');
+    return items ? '<div class="sp-readings"><strong>Readings.</strong><ul>' + items + '</ul></div>' : '';
+  }
   function render(el, data) {
     var keys = el.getAttribute('data-speaker').trim().split(/\s+/);
     var body = el.querySelector('.details-body');
@@ -956,6 +980,8 @@
     var bios = keys.map(function (k) { return data[k] && data[k].bio; })
                    .filter(Boolean).join('\n\n');
     if (bios) html += paragraphs(bios, 'Bio.');
+    // Readings come from the primary speaker (workshops list co-hosts but cite one set).
+    html += readingsHtml(primary.readings);
     var holder = body.querySelector('.sp-content');
     if (!holder) {
       holder = document.createElement('div');
