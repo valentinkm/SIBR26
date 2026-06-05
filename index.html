@@ -273,6 +273,59 @@
     white-space: nowrap;
   }
   .participants-cta a:hover { text-decoration: underline; }
+  .finder { margin: 0 0 24px; }
+  .finder-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .sp-search-wrap { position: relative; flex: 1 1 280px; min-width: 0; }
+  .sp-search {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .sp-search::placeholder { color: var(--muted); }
+  .sp-search:focus { outline: none; border-color: var(--accent); }
+  .sp-suggestions {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 4px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 30;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    max-height: 320px;
+    overflow-y: auto;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .sp-option { padding: 8px 10px; border-radius: 6px; cursor: pointer; }
+  .sp-option:hover, .sp-option.active { background: var(--accent-soft); }
+  .sp-option .nm { color: var(--ink); font-weight: 600; font-size: 0.92rem; }
+  .sp-option .tk {
+    color: var(--muted);
+    font-size: 0.82rem;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sp-empty { padding: 8px 10px; color: var(--muted); font-style: italic; font-size: 0.9rem; }
+  .ghost-btn {
+    display: inline-block;
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    color: var(--link);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .ghost-btn:hover { border-color: var(--accent); color: var(--accent); }
   footer {
     margin-top: 48px;
     color: var(--muted);
@@ -396,6 +449,16 @@
       <p class="meta">8–16 June 2026 · Max Planck Institute for Human Development, Berlin</p>
     </div>
   </header>
+
+  <section class="finder">
+    <div class="finder-bar">
+      <div class="sp-search-wrap">
+        <input type="text" id="sp-search" class="sp-search" placeholder="Search a speaker…" autocomplete="off" spellcheck="false" aria-label="Search a speaker" aria-autocomplete="list" aria-controls="sp-suggestions" aria-expanded="false">
+        <ul id="sp-suggestions" class="sp-suggestions" role="listbox" hidden></ul>
+      </div>
+      <a class="ghost-btn" href="https://valentinkm.github.io/sibr26-1e747e3b/" target="_blank" rel="nofollow noopener">Participant site →</a>
+    </div>
+  </section>
 
   <section class="schedule-overview">
     <h2>Schedule overview</h2>
@@ -923,6 +986,88 @@
         }
       });
     });
+})();
+</script>
+<script>
+// Speaker search — type-ahead that scrolls to and opens the matching session.
+(function () {
+  var input = document.getElementById('sp-search');
+  var sugg = document.getElementById('sp-suggestions');
+  if (!input || !sugg) return;
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function norm(s) { return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+
+  // Build the speaker index from the schedule.
+  var entries = [];
+  var rows = document.querySelectorAll('.session-row');
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    if (!row.id || !row.querySelector('[data-speaker]')) continue;
+    var spk = row.querySelector('.speaker');
+    if (!spk) continue;
+    var name = spk.textContent.trim();
+    var titleEl = row.querySelector('.title');
+    var full = titleEl ? titleEl.textContent : '';
+    var parts = full.split('—');
+    var talk = parts.length > 1 ? parts.slice(1).join('—').trim() : full.trim();
+    entries.push({ id: row.id, name: name, talk: talk, n: norm(name + ' ' + talk) });
+  }
+
+  var matches = [], active = -1;
+  function reveal(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var det = el.querySelector('details.session-details');
+    if (det) det.open = true;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+  }
+  function close() {
+    sugg.hidden = true; sugg.innerHTML = ''; matches = []; active = -1;
+    input.setAttribute('aria-expanded', 'false');
+    input.removeAttribute('aria-activedescendant');
+  }
+  function pick(e) { input.value = e.name; close(); reveal(e.id); }
+  function paint() {
+    var k = sugg.children;
+    for (var i = 0; i < k.length; i++) k[i].classList.toggle('active', i === active);
+    if (active >= 0) input.setAttribute('aria-activedescendant', 'sp-opt-' + active);
+    else input.removeAttribute('aria-activedescendant');
+  }
+  function update() {
+    var q = norm(input.value.trim());
+    if (!q) { close(); return; }
+    matches = entries.filter(function (e) { return e.n.indexOf(q) !== -1; }).slice(0, 8);
+    active = -1;
+    if (!matches.length) {
+      sugg.innerHTML = '<li class="sp-empty">No speaker found</li>';
+    } else {
+      sugg.innerHTML = matches.map(function (e, i) {
+        return '<li class="sp-option" role="option" id="sp-opt-' + i + '" data-i="' + i + '">'
+          + '<span class="nm">' + esc(e.name) + '</span>'
+          + (e.talk ? '<span class="tk">' + esc(e.talk) + '</span>' : '') + '</li>';
+      }).join('');
+    }
+    sugg.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+  }
+  input.addEventListener('input', update);
+  input.addEventListener('keydown', function (ev) {
+    if (sugg.hidden || !matches.length) return;
+    if (ev.key === 'ArrowDown') { ev.preventDefault(); active = Math.min(active + 1, matches.length - 1); paint(); }
+    else if (ev.key === 'ArrowUp') { ev.preventDefault(); active = Math.max(active - 1, 0); paint(); }
+    else if (ev.key === 'Enter') { ev.preventDefault(); pick(matches[active >= 0 ? active : 0]); }
+    else if (ev.key === 'Escape') { close(); }
+  });
+  sugg.addEventListener('mousedown', function (ev) {
+    var li = ev.target.closest('[data-i]');
+    if (!li) return;
+    ev.preventDefault();
+    pick(matches[+li.getAttribute('data-i')]);
+  });
+  document.addEventListener('click', function (ev) {
+    if (!ev.target.closest('.sp-search-wrap')) close();
+  });
 })();
 </script>
 </body>
