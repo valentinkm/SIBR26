@@ -4,6 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Summer Institute on Bounded Rationality 2026</title>
+<meta name="description" content="Summer Institute on Bounded Rationality 2026 — Decision Making in the Age of AI. 8–16 June 2026, Max Planck Institute for Human Development, Berlin.">
+<link rel="icon" href="logo.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Summer Institute on Bounded Rationality 2026">
+<meta property="og:description" content="Decision Making in the Age of AI · 8–16 June 2026 · Max Planck Institute for Human Development, Berlin">
+<meta property="og:image" content="https://valentinkm.github.io/SIBR26/logo.png">
+<meta property="og:url" content="https://valentinkm.github.io/SIBR26/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Summer Institute on Bounded Rationality 2026">
+<meta name="twitter:description" content="Decision Making in the Age of AI · 8–16 June 2026 · Max Planck Institute for Human Development, Berlin">
+<meta name="twitter:image" content="https://valentinkm.github.io/SIBR26/logo.png">
 <style>
   :root {
     --bg: #262626;
@@ -448,6 +459,35 @@
     0% { background: var(--accent-soft); }
     100% { background: transparent; }
   }
+  .now-banner {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    margin: 0 0 24px; padding: 12px 16px;
+    background: var(--accent-soft); border: 1px solid var(--accent-deep);
+    border-radius: 10px; font-size: 0.92rem;
+  }
+  .now-banner .nb-dot {
+    width: 9px; height: 9px; border-radius: 50%; background: var(--accent); flex: none;
+    animation: nbpulse 2s ease-out infinite;
+  }
+  @keyframes nbpulse {
+    0% { box-shadow: 0 0 0 0 rgba(110,168,255,0.55); }
+    70% { box-shadow: 0 0 0 8px rgba(110,168,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(110,168,255,0); }
+  }
+  @media (prefers-reduced-motion: reduce) { .now-banner .nb-dot { animation: none; } }
+  .now-banner a { color: var(--link); }
+  .now-banner .nb-next { color: var(--muted); }
+  .now-banner .nb-next b { color: var(--ink); font-weight: 600; }
+  table.week td.now-cell { box-shadow: inset 0 0 0 2px var(--accent); }
+  .session-row.now-row { box-shadow: inset 3px 0 0 var(--accent); }
+  .sched-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .ics-btn {
+    display: inline-block; padding: 6px 12px; font-size: 0.82rem;
+    color: var(--link); background: var(--panel);
+    border: 1px solid var(--line); border-radius: 999px;
+    text-decoration: none; cursor: pointer; white-space: nowrap;
+  }
+  .ics-btn:hover { border-color: var(--accent); color: var(--accent); }
 </style>
 </head>
 <body>
@@ -472,8 +512,13 @@
     </div>
   </section>
 
+  <div id="now-banner" class="now-banner" hidden></div>
+
   <section class="schedule-overview">
-    <h2>Schedule overview</h2>
+    <div class="sched-head">
+      <h2>Schedule overview</h2>
+      <button type="button" class="ics-btn" id="ics-btn">Add to calendar ↓</button>
+    </div>
     <p class="hint">The week at a glance. Scroll across days; see each session in full below.</p>
     <div class="schedule-scroll">
       <table class="week">
@@ -831,6 +876,15 @@
   </section>
 
   <section class="day">
+    <div class="day-header">Venue</div>
+    <div class="organizer">
+      <h3 class="org-name">Max Planck Institute for Human Development</h3>
+      <p class="org-bio">Lentzeallee 94, 14195 Berlin, Germany<br>
+      <a href="https://www.google.com/maps/search/?api=1&amp;query=Max+Planck+Institute+for+Human+Development%2C+Lentzeallee+94%2C+14195+Berlin" target="_blank" rel="noopener">Open in Google Maps →</a></p>
+    </div>
+  </section>
+
+  <section class="day">
     <div class="day-header">Organizers</div>
     <div class="organizers">
       <div class="organizer">
@@ -1094,6 +1148,126 @@
   document.addEventListener('click', function (ev) {
     if (!ev.target.closest('.sp-search-wrap')) close();
   });
+})();
+</script>
+<script>
+// Live "now / up next" indicator + whole-program calendar (.ics) export.
+(function () {
+  var TZ = '+02:00'; // Berlin (CEST) during the institute
+  var VENUE = 'Max Planck Institute for Human Development, Lentzeallee 94, 14195 Berlin';
+  // [row id, date (MM-DD), start, end] — drives both the now-indicator and the .ics export.
+  var SCHEDULE = [
+    ['s-8-1630','06-08','16:30','18:00'], ['s-8-1830','06-08','18:30','20:00'],
+    ['s-9-0910','06-09','09:10','11:00'], ['s-9-1130','06-09','11:30','13:00'],
+    ['s-9-1400','06-09','14:00','16:00'], ['s-9-1630','06-09','16:30','18:00'],
+    ['s-10-0910','06-10','09:10','11:00'], ['s-10-1130','06-10','11:30','13:00'],
+    ['s-10-1400','06-10','14:00','16:00'], ['s-10-1630','06-10','16:30','18:00'],
+    ['s-11-0910','06-11','09:10','11:00'], ['s-11-1130','06-11','11:30','13:00'],
+    ['s-11-1400','06-11','14:00','16:00'], ['s-11-1630','06-11','16:30','18:00'],
+    ['s-11-1830','06-11','18:30','20:00'],
+    ['s-12-0910','06-12','09:10','11:00'], ['s-12-1130','06-12','11:30','13:00'],
+    ['s-12-1400','06-12','14:00','16:00'], ['s-12-1630','06-12','16:30','18:00'],
+    ['s-13-0910','06-13','09:10','11:00'], ['s-13-1130','06-13','11:30','13:00'],
+    ['s-13-1400','06-13','14:00','16:00'], ['s-13-1630','06-13','16:30','18:00'],
+    ['s-15-0910','06-15','09:10','11:00'], ['s-15-1130','06-15','11:30','13:00'],
+    ['s-15-1400','06-15','14:00','16:00'], ['s-15-1630','06-15','16:30','18:00'],
+    ['s-15-1830','06-15','18:30','20:00'],
+    ['s-16-0910','06-16','09:10','11:00'], ['s-16-1130','06-16','11:30','13:00'],
+    ['s-16-1400','06-16','14:00','16:00']
+  ];
+  function iso(date, time) { return '2026-' + date + 'T' + time + ':00' + TZ; }
+  function title(id) {
+    var el = document.getElementById(id);
+    var t = el && el.querySelector('.title');
+    return (t ? t.textContent : (el ? el.textContent : id)).replace(/\s+/g, ' ').trim();
+  }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  var items = SCHEDULE.map(function (r) {
+    return { id: r[0], start: new Date(iso(r[1], r[2])), end: new Date(iso(r[1], r[3])) };
+  });
+
+  // --- now / up next banner ---
+  var banner = document.getElementById('now-banner');
+  function fmtTime(d) { return d.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin' }); }
+  function fmtWhen(d) { return d.toLocaleString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin' }); }
+  function clearHi() {
+    var c = document.querySelectorAll('.now-cell, .now-row');
+    for (var i = 0; i < c.length; i++) c[i].classList.remove('now-cell', 'now-row');
+  }
+  function highlight(id) {
+    var row = document.getElementById(id);
+    if (row) row.classList.add('now-row');
+    var link = document.querySelector('.week a[href="#' + id + '"]');
+    if (link) { var td = link.closest('td'); if (td) td.classList.add('now-cell'); }
+  }
+  function tick() {
+    if (!banner) return;
+    var now = Date.now(), cur = null, next = null;
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      if (it.start.getTime() <= now && now < it.end.getTime()) cur = it;
+      if (it.start.getTime() > now && !next) next = it;
+    }
+    clearHi();
+    if (!cur && !next) { banner.hidden = true; return; }
+    var html = '';
+    if (cur) {
+      highlight(cur.id);
+      html = '<span class="nb-dot"></span><span><b>Now</b> · <a href="#' + cur.id + '">' + esc(title(cur.id)) + '</a> · until ' + fmtTime(cur.end) + '</span>';
+      if (next) html += '<span class="nb-next">Next ' + fmtTime(next.start) + ' · <b>' + esc(title(next.id)) + '</b></span>';
+    } else {
+      html = '<span class="nb-dot"></span><span><b>Up next</b> · <a href="#' + next.id + '">' + esc(title(next.id)) + '</a> · ' + fmtWhen(next.start) + '</span>';
+    }
+    banner.innerHTML = html;
+    banner.hidden = false;
+  }
+  if (banner) {
+    banner.addEventListener('click', function (e) {
+      var a = e.target.closest('a[href^="#s-"]');
+      if (!a) return;
+      e.preventDefault();
+      var id = a.getAttribute('href').slice(1);
+      if (history.replaceState) history.replaceState(null, '', '#' + id);
+      var el = document.getElementById(id);
+      if (!el) return;
+      var det = el.querySelector('details.session-details');
+      if (det) det.open = true;
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+    });
+    tick();
+    setInterval(tick, 60000);
+  }
+
+  // --- whole-program calendar export ---
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function dt(d) {
+    return d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate())
+      + 'T' + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + '00Z';
+  }
+  function ie(s) { return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n'); }
+  function buildICS() {
+    var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//SIBR26//Program//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH'];
+    var stamp = dt(new Date());
+    items.forEach(function (it) {
+      L.push('BEGIN:VEVENT', 'UID:' + it.id + '@sibr26', 'DTSTAMP:' + stamp,
+        'DTSTART:' + dt(it.start), 'DTEND:' + dt(it.end),
+        'SUMMARY:' + ie('SIBR26 · ' + title(it.id)), 'LOCATION:' + ie(VENUE), 'END:VEVENT');
+    });
+    L.push('END:VCALENDAR');
+    return L.join('\r\n');
+  }
+  var icsBtn = document.getElementById('ics-btn');
+  if (icsBtn) {
+    icsBtn.addEventListener('click', function () {
+      var blob = new Blob([buildICS()], { type: 'text/calendar;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = 'SIBR26-program.ics';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    });
+  }
 })();
 </script>
 </body>
