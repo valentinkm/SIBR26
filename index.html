@@ -60,7 +60,13 @@
     -webkit-mask-image: radial-gradient(circle at center, #000 50%, transparent 82%);
             mask-image: radial-gradient(circle at center, #000 50%, transparent 82%);
   }
-  header.intro .titles { min-width: 0; }
+  header.intro .titles { min-width: 0; flex: 1; }
+  .title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
   h1 {
     font-size: 2rem;
     margin: 0 0 6px;
@@ -104,6 +110,7 @@
     header.intro { gap: 16px; }
     header.intro .logo { width: 64px; height: 64px; }
     h1 { font-size: 1.5rem; }
+    .title-row { flex-direction: column; align-items: flex-start; gap: 10px; }
   }
   .day {
     background: var(--panel);
@@ -349,6 +356,16 @@
     white-space: nowrap;
   }
   .ghost-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .login-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 16px; font-size: 0.9rem; font-weight: 600;
+    background: var(--accent);
+    border: 1px solid var(--accent); border-radius: 999px;
+    text-decoration: none; white-space: nowrap;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .login-btn, .login-btn:link, .login-btn:visited, .login-btn:hover { color: #fff; }
+  .login-btn:hover { background: #8abaff; border-color: #8abaff; }
   footer {
     margin-top: 48px;
     color: var(--muted);
@@ -494,9 +511,12 @@
 <div class="wrap">
 
   <header class="intro">
-    <video class="logo" src="Gen4animatedLogo.mp4" poster="logo.png" autoplay loop muted playsinline aria-label="SIBR 2026 logo"></video>
+    <video class="logo" src="Gen4animatedLogo-loop.mp4" poster="logo.png" autoplay loop muted playsinline aria-label="SIBR 2026 logo"></video>
     <div class="titles">
-      <h1>Summer Institute on Bounded Rationality</h1>
+      <div class="title-row">
+        <h1>Summer Institute on Bounded Rationality</h1>
+        <a class="login-btn" href="https://valentinkm.github.io/sibr26-1e747e3b/" target="_blank" rel="nofollow noopener">Participant login <span class="arr" aria-hidden="true">→</span></a>
+      </div>
       <p class="subtitle"><span class="typewriter"><span id="typed"></span><span class="cursor" id="cursor"></span><span id="ghost"></span></span></p>
       <p class="meta">8–16 June 2026 · Max Planck Institute for Human Development, Berlin</p>
     </div>
@@ -508,7 +528,6 @@
         <input type="text" id="sp-search" class="sp-search" placeholder="Search a speaker…" autocomplete="off" spellcheck="false" aria-label="Search a speaker" aria-autocomplete="list" aria-controls="sp-suggestions" aria-expanded="false">
         <ul id="sp-suggestions" class="sp-suggestions" role="listbox" hidden></ul>
       </div>
-      <a class="ghost-btn" href="https://valentinkm.github.io/sibr26-1e747e3b/" target="_blank" rel="nofollow noopener">Participant site →</a>
     </div>
   </section>
 
