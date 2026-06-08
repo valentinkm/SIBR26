@@ -150,6 +150,7 @@
   .cell .spk{font-weight:800;font-size:12px;display:block;margin-bottom:2px}
   .cell .wk{font-style:italic;opacity:.85;font-weight:600}
   .cell .desc{opacity:.95}
+  .cell.label .desc{font-weight:800;opacity:1}
 
   .cell.past{opacity:.4}
   .cell.current{
@@ -226,6 +227,27 @@
   body.is-fs .cell.empty{display:block}
   body.is-fs .foot{padding:clamp(8px,1vh,14px) 8px 2px}
   body.is-fs .ctrl{display:none}
+
+  /* ---- fullscreen: type scales with the screen so it reads on a big TV ---- */
+  body.is-fs .cell{font-size:clamp(13px,1.55vh,30px);line-height:1.28;padding:clamp(9px,1.2vh,22px) clamp(10px,1.1vw,24px)}
+  body.is-fs .cell .spk{font-size:clamp(14px,1.75vh,34px);margin-bottom:clamp(2px,0.4vh,8px)}
+  body.is-fs .cell.special{font-size:clamp(14px,1.75vh,34px)}
+  body.is-fs .cell.current::before{font-size:clamp(10px,1.05vh,20px)}
+  body.is-fs .dayhead{padding:clamp(8px,1vh,16px) 6px}
+  body.is-fs .dayhead .d{font-size:clamp(13px,1.55vh,30px)}
+  body.is-fs .dayhead .dt{font-size:clamp(10px,1.05vh,20px)}
+  body.is-fs .timecell{font-size:clamp(12px,1.45vh,28px)}
+  body.is-fs .group{font-size:clamp(10px,1.05vh,20px)}
+  body.is-fs .status .lead{font-size:clamp(14px,1.65vh,32px)}
+  body.is-fs .status .lead .label{font-size:clamp(10px,1.05vh,18px)}
+  body.is-fs .status .clock .t{font-size:clamp(20px,2.5vh,50px)}
+  body.is-fs .status .clock .z{font-size:clamp(10px,1.05vh,18px)}
+  body.is-fs .top h1{font-size:clamp(15px,1.7vh,34px)}
+  body.is-fs .top .sub{font-size:clamp(11px,1.15vh,22px)}
+  body.is-fs .top .title b{font-size:clamp(15px,1.7vh,34px);max-width:none}
+  body.is-fs .top .title span{font-size:clamp(11px,1.15vh,22px)}
+  body.is-fs .foot{font-size:clamp(12px,1.3vh,24px)}
+  body.is-fs .legend i{width:clamp(14px,1.4vh,26px);height:clamp(14px,1.4vh,26px)}
   .ctrl .pv{color:var(--now);font-weight:700;font-variant-numeric:tabular-nums;min-width:170px;display:inline-block}
 
   @media (max-width:640px){
@@ -411,7 +433,7 @@ function buildGrid(){
       if(c.s) inner+=`<span class="spk">${c.s}</span>`;
       if(c.w) inner+=`<span class="wk">${c.w}: </span>`;
       inner+=`<span class="desc">${c.d}</span>`;
-      const cls = c.t===X ? "special" : c.t;
+      const cls = (c.t===X ? "special" : c.t) + (c.s ? "" : " label");
       html+=`<div class="cell ${cls}" data-day="${di}" data-slot="${si}">${inner}</div>`;
     });
   });
