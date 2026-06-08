@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schedule · Decision Making in the Age of AI</title>
+<style>
+  :root{
+    --bg:#0f1014;
+    --panel:#ffffff;
+    --ink:#16182b;
+    --muted:#6b7088;
+    --line:#e3e5ee;
+    --talk:#2d2f8f;
+    --talk2:#3a3dad;
+    --poster:#a02b8c;
+    --poster2:#b8329f;
+    --social:#3fae7c;
+    --social2:#52c08f;
+    --special:#eef0f7;
+    --now:#ffc24b;
+    --now-glow:rgba(255,194,75,.55);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- top bar ---- */
+  header.top{
+    background:#121319;
+    color:#fff;
+    padding:18px 22px;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    border-bottom:1px solid #23252f;
+  }
+  .top h1{font-size:15px;letter-spacing:.14em;margin:0;font-weight:800}
+  .top .sub{font-size:12px;color:#9aa0b5;margin-top:4px;letter-spacing:.04em}
+  .top .title{text-align:right}
+  .top .title b{font-size:15px;font-weight:800;letter-spacing:.06em;display:block;line-height:1.3;max-width:520px}
+  .top .title span{font-size:12px;color:#9aa0b5;letter-spacing:.08em}
+
+  /* ---- status banner ---- */
+  .status{
+    margin:0;
+    padding:14px 22px;
+    background:#1a1c25;
+    color:#fff;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:16px 24px;
+    border-bottom:1px solid #23252f;
+  }
+  .status .dot{
+    width:10px;height:10px;border-radius:50%;background:var(--now);
+    box-shadow:0 0 0 0 var(--now-glow);
+    animation:pulse 1.8s infinite;flex:none;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 var(--now-glow)}
+    70%{box-shadow:0 0 0 12px rgba(255,194,75,0)}
+    100%{box-shadow:0 0 0 0 rgba(255,194,75,0)}
+  }
+  .status .lead{font-size:14px;line-height:1.4}
+  .status .lead .label{color:#9aa0b5;text-transform:uppercase;letter-spacing:.1em;font-size:11px;font-weight:700;display:block;margin-bottom:2px}
+  .status .lead b{font-weight:700}
+  .status .clock{margin-left:auto;text-align:right;font-variant-numeric:tabular-nums}
+  .status .clock .t{font-size:22px;font-weight:700;letter-spacing:.02em}
+  .status .clock .z{font-size:11px;color:#9aa0b5;letter-spacing:.08em}
+
+  /* ---- grid wrap ---- */
+  .wrap{padding:14px;background:var(--bg)}
+  .scroller{overflow-x:auto;border-radius:14px;background:var(--panel);padding:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+  .grid{
+    display:grid;
+    grid-template-columns:78px repeat(9, minmax(132px,1fr));
+    gap:8px;
+    min-width:1180px;
+  }
+
+  .group{
+    grid-row:1;
+    font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);
+    padding:2px 10px 8px;
+    border-bottom:2px solid var(--line);
+    display:flex;align-items:flex-end;
+  }
+  .group.school{grid-column:2 / span 4}
+  .group.conf{grid-column:6 / span 5}
+  .group .spacer{grid-column:1}
+
+  .dayhead{
+    border:1.5px solid var(--line);
+    border-radius:11px;
+    padding:9px 6px;
+    text-align:center;
+    font-weight:700;
+    color:var(--ink);
+    background:#fff;
+    line-height:1.25;
+  }
+  .dayhead .d{font-size:13px}
+  .dayhead .dt{font-size:10px;color:var(--muted);font-weight:600;margin-top:2px}
+  .dayhead.today{
+    border-color:var(--now);
+    background:#fffaf0;
+    box-shadow:0 0 0 2px var(--now-glow);
+  }
+  .dayhead.today .d::after{content:" • TODAY";color:#b07d12;font-size:9px;letter-spacing:.08em}
+
+  .timecell{
+    align-self:stretch;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    border:1.5px solid var(--line);
+    border-radius:11px;
+    font-size:12px;font-weight:700;color:var(--ink);
+    padding:6px 2px;text-align:center;line-height:1.3;
+    position:relative;
+  }
+  .timecell.live{border-color:var(--now);background:#fffaf0}
+  .timecell .nowline{
+    position:absolute;left:-6px;right:0;height:2px;background:var(--now);display:none;
+  }
+
+  .cell{
+    border-radius:11px;
+    padding:9px 10px;
+    min-height:78px;
+    color:#fff;
+    font-size:11.5px;
+    line-height:1.32;
+    position:relative;
+    transition:transform .15s ease, box-shadow .15s ease, opacity .2s;
+  }
+  .cell.empty{background:transparent}
+  .cell.talk{background:var(--talk)}
+  .cell.poster{background:var(--poster)}
+  .cell.social{background:var(--social)}
+  .cell.special{background:var(--special);color:#5a5f78;font-weight:700;display:flex;align-items:center}
+  .cell .spk{font-weight:800;font-size:12px;display:block;margin-bottom:2px}
+  .cell .wk{font-style:italic;opacity:.85;font-weight:600}
+  .cell .desc{opacity:.95}
+
+  .cell.past{opacity:.4}
+  .cell.current{
+    transform:translateY(-2px) scale(1.015);
+    box-shadow:0 0 0 3px var(--now), 0 0 22px 4px var(--now-glow);
+    z-index:5;
+  }
+  .cell.current::before{
+    content:"● LIVE NOW";
+    position:absolute;top:6px;right:8px;
+    font-size:8.5px;font-weight:800;letter-spacing:.08em;
+    color:var(--now);
+    text-shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+  .cell.current .spk,.cell.current .desc{padding-top:10px}
+
+  /* ---- legend / controls ---- */
+  .foot{
+    display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;
+    padding:14px 8px 4px;color:#cfd2df;font-size:12px;
+  }
+  .legend{display:flex;flex-wrap:wrap;gap:14px}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .legend i{width:14px;height:14px;border-radius:4px;display:inline-block}
+  .legend .talk{background:var(--talk)}
+  .legend .poster{background:var(--poster)}
+  .legend .social{background:var(--social)}
+  .ctrl{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .ctrl label{color:#9aa0b5}
+  .ctrl input[type=range]{width:230px;accent-color:var(--now)}
+  .ctrl button{
+    background:#23252f;color:#fff;border:1px solid #3a3d4d;border-radius:7px;
+    padding:5px 11px;font-size:12px;cursor:pointer;
+  }
+  .ctrl button:hover{background:#2e313d}
+  .fs-zone{
+    position:fixed;right:0;bottom:0;z-index:60;
+    width:200px;height:120px;
+    display:flex;align-items:flex-end;justify-content:flex-end;
+    padding:22px;pointer-events:none;
+  }
+  #fsBtn{
+    pointer-events:auto;
+    background:var(--now);color:#1a1c25;border:none;border-radius:9px;
+    padding:9px 14px;font-size:13px;font-weight:800;cursor:pointer;
+    letter-spacing:.03em;display:inline-flex;align-items:center;gap:7px;
+    opacity:0;transform:translateY(6px);
+    transition:opacity .25s ease, transform .25s ease, background .15s;
+    box-shadow:0 6px 22px rgba(0,0,0,.4);
+  }
+  .fs-zone:hover #fsBtn{opacity:1;transform:translateY(0)}
+  #fsBtn:hover{background:#ffd066}
+  #fsBtn svg{width:15px;height:15px;fill:currentColor}
+  body:fullscreen{background:var(--bg);overflow:auto}
+  body:fullscreen .scroller{box-shadow:none}
+  .ctrl .pv{color:var(--now);font-weight:700;font-variant-numeric:tabular-nums;min-width:170px;display:inline-block}
+
+  @media (max-width:640px){
+    .top .title b{font-size:13px}
+    .status .clock{margin-left:0}
+    .ctrl{margin-left:0;width:100%;flex-wrap:wrap}
+    .ctrl input[type=range]{flex:1;width:auto}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <h1>SCHEDULE</h1>
+    <div class="sub">SUMMER INSTITUTE · JUNE 8–11, 2026</div>
+  </div>
+  <div class="title">
+    <b>DECISION MAKING IN THE AGE OF ARTIFICIAL INTELLIGENCE</b>
+    <span>CONFERENCE · JUNE 12–16, 2026</span>
+  </div>
+</header>
+
+<div class="status">
+  <div class="dot" id="statusDot"></div>
+  <div class="lead">
+    <span class="label" id="statusLabel">Status</span>
+    <span id="statusText">Loading…</span>
+  </div>
+  <div class="clock">
+    <div class="t" id="clockTime">--:--:--</div>
+    <div class="z">Europe/Berlin · <span id="clockDate">—</span></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="scroller">
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="foot">
+    <div class="legend">
+      <span><i class="talk"></i> Talk / Workshop</span>
+      <span><i class="poster"></i> Posters / Projects</span>
+      <span><i class="social"></i> Social / Logistics</span>
+    </div>
+    <div class="ctrl">
+      <label><input type="checkbox" id="previewToggle"> Preview a time</label>
+      <input type="range" id="previewRange" min="0" max="100" value="0" disabled>
+      <span class="pv" id="previewVal">live</span>
+      <button id="resetBtn">Now</button>
+    </div>
+  </div>
+</div>
+
+<div class="fs-zone">
+  <button id="fsBtn" title="Toggle full screen (F)">
+    <svg viewBox="0 0 24 24"><path d="M4 9V4h5v2H6v3H4zm0 6h2v3h3v2H4v-5zm16 0v5h-5v-2h3v-3h2zM20 9h-2V6h-3V4h5v5z"/></svg>
+    <span id="fsLabel">Full screen</span>
+  </button>
+</div>
+
+<script>
+/* ---------------- schedule data ---------------- */
+const DAYS = [
+  {label:"Mon 8th",  dt:"Jun 8",  date:8},
+  {label:"Tue 9th",  dt:"Jun 9",  date:9},
+  {label:"Wed 10th", dt:"Jun 10", date:10},
+  {label:"Thu 11th", dt:"Jun 11", date:11},
+  {label:"Fri 12th", dt:"Jun 12", date:12},
+  {label:"Sat 13th", dt:"Jun 13", date:13},
+  {label:"Sunday",   dt:"Jun 14", date:14},
+  {label:"Mon 15th", dt:"Jun 15", date:15},
+  {label:"Tue 16th", dt:"Jun 16", date:16},
+];
+const SLOTS = [
+  {start:"09:10", end:"11:00"},
+  {start:"11:30", end:"13:00"},
+  {start:"14:00", end:"16:00"},
+  {start:"16:30", end:"18:00"},
+  {start:"18:30", end:"20:00"},
+];
+const T="talk", P="poster", S="social", X="special", _=null;
+// rows = slots, columns = days (Mon8 … Tue16)
+const CELLS = [
+  [ _,
+    {t:T,s:"Ralph Hertwig",d:"The ABCs of Bounded Rationality: Adaptive Rules for an Uncertain World"},
+    {t:T,s:"Peter M. Todd",d:"Foraging in Mind, with Heuristics and AI Collaborators"},
+    {t:T,s:"Kamil Fulawka",d:"Large Language Models Accurately Identify Decision Reasons in Verbal Reports"},
+    {t:T,s:"Rui Mata",d:"Advancing Cognitive Science with LLMs"},
+    {t:T,s:"Jason Burton",d:"How Large Language Models Can Reshape Collective Intelligence"},
+    {t:X,d:"Enjoy your day off!"},
+    {t:T,s:"Zoe Rahwan",d:"How Delegating Decisions to AI Can Shape Dishonesty"},
+    {t:T,s:"Gerd Gigerenzer",d:"On AI-Pollution: Will AI Contaminate Science?"} ],
+
+  [ _,
+    {t:T,s:"Konstantinos Katsikopoulos",d:"Operationalizing Bounded Rationality"},
+    {t:T,s:"Tomás Lejarraga",d:"How experimental methods shaped views on human competence and rationality"},
+    {t:T,s:"Levin Brinkmann",d:"When Machines Expand Human Problem-Solving"},
+    {t:T,s:"Dirk Wulff",d:"Increasing Conceptual Clarity in Psychology with LLMs"},
+    {t:T,s:"Nikolas Zöller",d:"Improving Medical Diagnosis with Human-AI Collectives"},
+    _,
+    {t:T,s:"Anastasia Kozyreva",d:"Free Speech vs. Harmful Misinformation: The Psychology and Politics of Online Speech Governance"},
+    {t:P,d:"Project Presentations"} ],
+
+  [ _,
+    {t:T,s:"Özgür Şimşek",w:"Workshop",d:"Classification in the Wild"},
+    {t:T,s:"Shahar Hechtlinger",w:"Workshop",d:"How People Make Life's Most Important Decisions"},
+    {t:P,d:"Speed Talks and Poster Session"},
+    {t:T,s:"Raluca Rilla & Dirk Wulff",w:"Workshop",d:"Recognising and Mitigating LLM-Pollution"},
+    {t:T,s:"Julian Berger & Stefan Herzog",w:"Workshop",d:"Learning in Human-AI Interaction: Boosting vs. Handicapping Human Competences"},
+    _,
+    {t:T,s:"Mario Scharfbillig",d:"Fractured Reality – How Democracy Can Win the Global Struggle Over the Information Space"},
+    {t:S,d:"Closing Session"} ],
+
+  [ {t:S,d:"Registration / Introduction"},
+    {t:P,d:"Speed Talks and Poster Session"},
+    {t:T,d:"Q&A — Ralph Hertwig and Peter M. Todd"},
+    {t:T,s:"Keynote — Krishna Gummadi",d:"Engineering the Psychology of Machine Judgment Under Uncertainty"},
+    {t:P,d:"Project Discussion"},
+    {t:P,d:"Project Discussion"},
+    _,
+    {t:T,s:"Renée DiResta",w:"Hero of Science",d:"Invisible Rulers, Visible Costs: Propaganda, AI, and the Fight for Shared Reality"},
+    _ ],
+
+  [ {t:S,d:"Institute Tour / Drinks"},
+    _, _,
+    {t:S,d:"BBQ"},
+    _, _, _,
+    {t:S,d:"Dinner"},
+    _ ],
+];
+
+/* ---------------- time helpers ---------------- */
+// Comparison value: wall-clock treated as UTC so the same offset applies to
+// "now" and every cell, making the comparison timezone-agnostic.
+function cmp(dayIdx, hhmm){
+  const [h,m]=hhmm.split(":").map(Number);
+  return Date.UTC(2026,5,DAYS[dayIdx].date,h,m);
+}
+function nowBerlin(){
+  const fmt=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Berlin",
+    year:"numeric",month:"2-digit",day:"2-digit",
+    hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
+  const p={};
+  for(const part of fmt.formatToParts(new Date())) if(part.type!=="literal") p[part.type]=+part.value;
+  return p;
+}
+function nowCmpReal(){
+  const p=nowBerlin();
+  return {cmp:Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute,p.second),p};
+}
+
+/* flat session list for current/next lookup */
+const SESSIONS=[];
+CELLS.forEach((row,si)=>row.forEach((c,di)=>{
+  if(!c||c.t===X) return;
+  SESSIONS.push({di,si,c,start:cmp(di,SLOTS[si].start),end:cmp(di,SLOTS[si].end)});
+}));
+SESSIONS.sort((a,b)=>a.start-b.start);
+const FIRST=SESSIONS[0].start, LAST=SESSIONS[SESSIONS.length-1].end;
+const RANGE_LO=cmp(0,"08:00"), RANGE_HI=cmp(8,"21:00");
+
+/* ---------------- build grid ---------------- */
+const grid=document.getElementById("grid");
+function buildGrid(){
+  let html="";
+  html+='<div class="group spacer"></div>';
+  html+='<div class="group school">Summer Institute · Jun 8–11</div>';
+  html+='<div class="group conf">Conference · Jun 12–16</div>';
+  // header row
+  html+='<div class="dayhead" style="visibility:hidden"></div>';
+  DAYS.forEach((d,di)=>{
+    html+=`<div class="dayhead" data-day="${di}"><div class="d">${d.label}</div><div class="dt">${d.dt}</div></div>`;
+  });
+  // slot rows
+  SLOTS.forEach((sl,si)=>{
+    html+=`<div class="timecell" data-slot="${si}"><span class="nowline"></span>${sl.start}<br>–<br>${sl.end}</div>`;
+    DAYS.forEach((d,di)=>{
+      const c=CELLS[si][di];
+      if(!c){ html+='<div class="cell empty"></div>'; return; }
+      let inner="";
+      if(c.s) inner+=`<span class="spk">${c.s}</span>`;
+      if(c.w) inner+=`<span class="wk">${c.w}: </span>`;
+      inner+=`<span class="desc">${c.d}</span>`;
+      const cls = c.t===X ? "special" : c.t;
+      html+=`<div class="cell ${cls}" data-day="${di}" data-slot="${si}">${inner}</div>`;
+    });
+  });
+  grid.innerHTML=html;
+}
+buildGrid();
+
+/* ---------------- reactive update ---------------- */
+const elDot=document.getElementById("statusDot"),
+      elLabel=document.getElementById("statusLabel"),
+      elText=document.getElementById("statusText"),
+      elClockT=document.getElementById("clockTime"),
+      elClockD=document.getElementById("clockDate");
+
+function fmtCountdown(ms){
+  const tot=Math.max(0,Math.round(ms/1000));
+  const d=Math.floor(tot/86400), h=Math.floor(tot%86400/3600),
+        m=Math.floor(tot%3600/60), s=tot%60;
+  if(d>0) return `${d}d ${h}h ${m}m`;
+  if(h>0) return `${h}h ${m}m`;
+  return `${m}m ${String(s).padStart(2,"0")}s`;
+}
+const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+function update(){
+  let nowCmp, clockStr, dateStr;
+  if(preview.on){
+    nowCmp=preview.cmp;
+    const dd=new Date(nowCmp);
+    clockStr=String(dd.getUTCHours()).padStart(2,"0")+":"+String(dd.getUTCMinutes()).padStart(2,"0");
+    dateStr=DOW[dd.getUTCDay()]+" Jun "+dd.getUTCDate()+" (preview)";
+  }else{
+    const n=nowCmpReal(); nowCmp=n.cmp;
+    clockStr=String(n.p.hour).padStart(2,"0")+":"+String(n.p.minute).padStart(2,"0")+":"+String(n.p.second).padStart(2,"0");
+    dateStr=DOW[new Date(nowCmp).getUTCDay()]+", Jun "+n.p.day;
+  }
+  elClockT.textContent=clockStr;
+  elClockD.textContent=dateStr;
+
+  // figure out current + next session
+  const current=SESSIONS.find(x=>nowCmp>=x.start && nowCmp<x.end);
+  const next=SESSIONS.find(x=>x.start>nowCmp);
+
+  // highlight cells
+  document.querySelectorAll(".cell").forEach(el=>{
+    el.classList.remove("current","past");
+    const di=el.dataset.day, si=el.dataset.slot;
+    if(di===undefined||el.classList.contains("empty")) return;
+    const start=cmp(+di,SLOTS[+si].start), end=cmp(+di,SLOTS[+si].end);
+    if(nowCmp>=start && nowCmp<end && !el.classList.contains("special")) el.classList.add("current");
+    else if(nowCmp>=end) el.classList.add("past");
+  });
+
+  // highlight current day header + slot time
+  let curDay=-1, curSlot=-1;
+  for(let di=0;di<DAYS.length;di++){
+    if(nowCmp>=cmp(di,"00:00") && nowCmp<cmp(di,"23:59")) curDay=di;
+  }
+  for(let si=0;si<SLOTS.length;si++){
+    if(nowCmp>=cmp(curDay<0?0:curDay,SLOTS[si].start) && nowCmp<cmp(curDay<0?0:curDay,SLOTS[si].end)) curSlot=si;
+  }
+  document.querySelectorAll(".dayhead").forEach(el=>{
+    el.classList.toggle("today", el.dataset.day!==undefined && +el.dataset.day===curDay);
+  });
+  document.querySelectorAll(".timecell").forEach(el=>{
+    const live=(+el.dataset.slot===curSlot && curSlot>=0);
+    el.classList.toggle("live",live);
+    el.querySelector(".nowline").style.display=live?"block":"none";
+  });
+
+  // status banner
+  elDot.style.display="block";
+  if(nowCmp<FIRST){
+    elDot.style.display="none";
+    elLabel.textContent="Not started yet";
+    elText.innerHTML=`The institute begins <b>Mon, Jun 8 · 16:30</b> — Registration / Introduction. Starts in <b>${fmtCountdown(FIRST-nowCmp)}</b>.`;
+  }else if(nowCmp>=LAST){
+    elDot.style.display="none";
+    elLabel.textContent="Concluded";
+    elText.innerHTML=`The institute has concluded. Thanks for joining! 🎉`;
+  }else if(current){
+    const c=current.c, d=DAYS[current.di];
+    elLabel.textContent="● Live now";
+    elText.innerHTML=`<b>${d.label} · ${SLOTS[current.si].start}–${SLOTS[current.si].end}</b> — ${c.s?c.s+": ":""}${c.d}. Ends in <b>${fmtCountdown(current.end-nowCmp)}</b>.`;
+  }else if(next){
+    const c=next.c, d=DAYS[next.di];
+    elLabel.textContent="On a break · up next";
+    elText.innerHTML=`<b>${d.label} · ${SLOTS[next.si].start}</b> — ${c.s?c.s+": ":""}${c.d}. Starts in <b>${fmtCountdown(next.start-nowCmp)}</b>.`;
+  }else{
+    elLabel.textContent="Day off";
+    elText.innerHTML=`No sessions right now — enjoy the break.`;
+  }
+}
+
+/* ---------------- preview / time-travel ---------------- */
+const preview={on:false,cmp:0};
+const toggle=document.getElementById("previewToggle"),
+      range=document.getElementById("previewRange"),
+      pv=document.getElementById("previewVal"),
+      resetBtn=document.getElementById("resetBtn");
+range.min=RANGE_LO; range.max=RANGE_HI; range.step=300000; // 5-min steps
+toggle.addEventListener("change",()=>{
+  preview.on=toggle.checked;
+  range.disabled=!preview.on;
+  if(preview.on){
+    const n=nowCmpReal();
+    preview.cmp=Math.min(Math.max(n.cmp,RANGE_LO),RANGE_HI);
+    range.value=preview.cmp;
+  }else{ pv.textContent="live"; }
+  update();
+});
+range.addEventListener("input",()=>{
+  preview.cmp=+range.value;
+  const dd=new Date(preview.cmp);
+  pv.textContent=DOW[dd.getUTCDay()]+" Jun "+dd.getUTCDate()+" "+
+    String(dd.getUTCHours()).padStart(2,"0")+":"+String(dd.getUTCMinutes()).padStart(2,"0");
+  update();
+});
+resetBtn.addEventListener("click",()=>{
+  toggle.checked=false;preview.on=false;range.disabled=true;pv.textContent="live";update();
+});
+
+/* ---------------- fullscreen ---------------- */
+const fsBtn=document.getElementById("fsBtn"), fsLabel=document.getElementById("fsLabel");
+function toggleFs(){
+  if(!document.fullscreenElement){
+    (document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen||(()=>{})).call(document.documentElement);
+  }else{
+    (document.exitFullscreen||document.webkitExitFullscreen||(()=>{})).call(document);
+  }
+}
+fsBtn.addEventListener("click",toggleFs);
+document.addEventListener("keydown",e=>{
+  if((e.key==="f"||e.key==="F") && !/input|textarea/i.test(e.target.tagName)) toggleFs();
+});
+document.addEventListener("fullscreenchange",()=>{
+  fsLabel.textContent=document.fullscreenElement?"Exit full screen":"Full screen";
+});
+
+/* ---------------- run ---------------- */
+update();
+setInterval(()=>{ if(!preview.on) update(); },1000);
+
+// scroll current day into view on load
+(function(){
+  const n=nowCmpReal().cmp;
+  if(n>=FIRST && n<LAST){
+    let di=-1;
+    for(let i=0;i<DAYS.length;i++) if(n>=cmp(i,"00:00")&&n<cmp(i,"23:59")) di=i;
+    if(di>=0){
+      const h=document.querySelector(`.dayhead[data-day="${di}"]`);
+      if(h) h.scrollIntoView({inline:"center",block:"nearest"});
+    }
+  }
+})();
+</script>
+</body>
+</html>

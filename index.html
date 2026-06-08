@@ -503,6 +503,14 @@
   table.week td.now-cell { box-shadow: inset 0 0 0 2px var(--accent); }
   .session-row.now-row { box-shadow: inset 3px 0 0 var(--accent); }
   .sched-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  a.sched-link { color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; }
+  a.sched-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+  a.sched-link .live-pill {
+    font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent-deep); border: 1px solid var(--line); border-radius: 999px;
+    padding: 2px 8px; white-space: nowrap; transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  a.sched-link:hover .live-pill { background: var(--accent-deep); color: #f0f6ff; border-color: var(--accent-deep); }
   .ics-btn {
     display: inline-block; padding: 6px 12px; font-size: 0.82rem;
     color: var(--link); background: var(--panel);
@@ -540,7 +548,7 @@
 
   <section class="schedule-overview">
     <div class="sched-head">
-      <h2>Schedule overview</h2>
+      <h2><a class="sched-link" href="schedule.html" title="Open the live, time-reactive schedule">Schedule overview <span class="live-pill">Live view ↗</span></a></h2>
       <button type="button" class="ics-btn" id="ics-btn">Add to calendar ↓</button>
     </div>
     <p class="hint">The week at a glance. Scroll across days; see each session in full below.</p>
