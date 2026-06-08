@@ -203,8 +203,29 @@
   .fs-zone:hover #fsBtn{opacity:1;transform:translateY(0)}
   #fsBtn:hover{background:#ffd066}
   #fsBtn svg{width:15px;height:15px;fill:currentColor}
-  body:fullscreen{background:var(--bg);overflow:auto}
-  body:fullscreen .scroller{box-shadow:none}
+  /* ---- fullscreen: fill the whole TV, adaptive margins ---- */
+  body.is-fs{
+    display:flex;flex-direction:column;height:100vh;overflow:hidden;background:var(--bg);
+  }
+  body.is-fs .top{padding:clamp(10px,1.6vh,20px) clamp(16px,2vw,30px)}
+  body.is-fs .status{padding:clamp(8px,1.4vh,16px) clamp(16px,2vw,30px)}
+  body.is-fs .wrap{
+    flex:1 1 auto;min-height:0;display:flex;flex-direction:column;
+    padding:clamp(10px,1.6vmin,22px);
+  }
+  body.is-fs .scroller{
+    flex:1 1 auto;min-height:0;display:flex;flex-direction:column;
+    box-shadow:none;overflow:auto;padding:clamp(10px,1.4vmin,16px);
+  }
+  body.is-fs .grid{
+    flex:1 1 auto;min-height:0;height:100%;
+    grid-template-rows:auto auto repeat(5, minmax(min-content,1fr));
+    gap:clamp(6px,0.8vmin,12px);
+  }
+  body.is-fs .cell{display:flex;flex-direction:column;justify-content:center}
+  body.is-fs .cell.empty{display:block}
+  body.is-fs .foot{padding:clamp(8px,1vh,14px) 8px 2px}
+  body.is-fs .ctrl{display:none}
   .ctrl .pv{color:var(--now);font-weight:700;font-variant-numeric:tabular-nums;min-width:170px;display:inline-block}
 
   @media (max-width:640px){
@@ -526,9 +547,13 @@ fsBtn.addEventListener("click",toggleFs);
 document.addEventListener("keydown",e=>{
   if((e.key==="f"||e.key==="F") && !/input|textarea/i.test(e.target.tagName)) toggleFs();
 });
-document.addEventListener("fullscreenchange",()=>{
-  fsLabel.textContent=document.fullscreenElement?"Exit full screen":"Full screen";
-});
+function onFsChange(){
+  const on=!!(document.fullscreenElement||document.webkitFullscreenElement);
+  fsLabel.textContent=on?"Exit full screen":"Full screen";
+  document.body.classList.toggle("is-fs",on);
+}
+document.addEventListener("fullscreenchange",onFsChange);
+document.addEventListener("webkitfullscreenchange",onFsChange);
 
 /* ---------------- run ---------------- */
 update();
