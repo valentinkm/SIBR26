@@ -186,6 +186,10 @@
     padding:5px 11px;font-size:12px;cursor:pointer;
   }
   .ctrl button:hover{background:#2e313d}
+
+  /* ---- mobile day switcher (phones only; hidden on desktop) ---- */
+  .daynav{display:none}
+
   .fs-zone{
     position:fixed;right:0;bottom:0;z-index:60;
     width:200px;height:120px;
@@ -255,6 +259,76 @@
     .status .clock{margin-left:0}
     .ctrl{margin-left:0;width:100%;flex-wrap:wrap}
     .ctrl input[type=range]{flex:1;width:auto}
+
+    /* ===== phone single-day view: the current day fills the screen ===== */
+    html,body{height:100%}
+    body{display:flex;flex-direction:column;min-height:100vh}
+
+    /* day switcher bar */
+    .daynav{
+      display:flex;align-items:center;gap:10px;
+      margin:0 0 10px;padding:8px 10px;
+      background:#1a1c25;border:1px solid #23252f;border-radius:11px;
+      color:#fff;
+    }
+    .daynav .dn-arrow{
+      flex:none;width:38px;height:38px;border-radius:9px;
+      background:#23252f;color:#fff;border:1px solid #3a3d4d;
+      font-size:20px;line-height:1;font-weight:700;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .daynav .dn-arrow:active{background:#2e313d}
+    .daynav .dn-arrow:disabled{opacity:.3;cursor:default}
+    .daynav .dn-label{
+      flex:1;text-align:center;line-height:1.2;cursor:pointer;
+      display:flex;flex-direction:column;gap:1px;
+    }
+    .daynav .dn-day{font-size:15px;font-weight:800;letter-spacing:.02em}
+    .daynav .dn-dt{font-size:11px;color:#9aa0b5;letter-spacing:.06em}
+    .daynav.istoday .dn-day::after{
+      content:" • TODAY";color:var(--now);font-size:10px;letter-spacing:.08em;
+    }
+    .daynav:not(.istoday) .dn-dt::after{
+      content:" · tap for today";color:var(--now);
+    }
+
+    /* let the schedule fill the remaining height */
+    .wrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:10px}
+    .scroller{
+      flex:1 1 auto;min-height:0;display:flex;flex-direction:column;
+      overflow-x:hidden;overflow-y:auto;padding:10px;box-shadow:none;
+    }
+
+    /* collapse the 9-day grid to: time column + the focused day */
+    .grid{
+      flex:1 1 auto;min-height:0;min-width:0;
+      grid-template-columns:50px 1fr;
+      grid-template-rows:auto repeat(5, minmax(64px, 1fr));
+      gap:7px;
+    }
+    .grid > .group{display:none}
+    .grid > .dayhead[data-day]:not(.mfocus){display:none}
+    .grid > .cell:not(.mfocus){display:none}
+
+    /* readable sizing on a phone */
+    .grid .dayhead{font-size:13px;padding:9px 6px}
+    .grid .timecell{font-size:12px;padding:6px 2px}
+    .cell{min-height:0;font-size:13.5px;line-height:1.34;padding:11px 12px;
+      display:flex;flex-direction:column;justify-content:center}
+    .cell .spk{font-size:14.5px;margin-bottom:3px}
+    .cell.special{font-size:14px}
+    .cell.current::before{font-size:9.5px}
+
+    /* empty slots become a clear "no session" break rather than a blank box */
+    .cell.empty.mfocus{
+      background:#fff;border:1px dashed var(--line);
+      align-items:center;justify-content:center;
+    }
+    .cell.empty.mfocus::after{content:"No session";color:var(--muted);font-weight:600;font-size:12px}
+
+    /* the time-traveller controls are awkward on a phone; keep the legend */
+    .foot{padding:12px 4px 2px}
+    .ctrl{display:none}
   }
 </style>
 </head>
@@ -284,6 +358,14 @@
 </div>
 
 <div class="wrap">
+  <div class="daynav" id="daynav">
+    <button class="dn-arrow" id="dnPrev" aria-label="Previous day">‹</button>
+    <div class="dn-label" id="dnLabel" title="Tap to jump to today" role="button" tabindex="0">
+      <span class="dn-day" id="dnDay">—</span>
+      <span class="dn-dt" id="dnDt"></span>
+    </div>
+    <button class="dn-arrow" id="dnNext" aria-label="Next day">›</button>
+  </div>
   <div class="scroller">
     <div class="grid" id="grid"></div>
   </div>
@@ -428,7 +510,7 @@ function buildGrid(){
     html+=`<div class="timecell" data-slot="${si}"><span class="nowline"></span>${sl.start}<br>–<br>${sl.end}</div>`;
     DAYS.forEach((d,di)=>{
       const c=CELLS[si][di];
-      if(!c){ html+='<div class="cell empty"></div>'; return; }
+      if(!c){ html+=`<div class="cell empty" data-day="${di}" data-slot="${si}"></div>`; return; }
       let inner="";
       if(c.s) inner+=`<span class="spk">${c.s}</span>`;
       if(c.w) inner+=`<span class="wk">${c.w}: </span>`;
@@ -447,6 +529,17 @@ const elDot=document.getElementById("statusDot"),
       elText=document.getElementById("statusText"),
       elClockT=document.getElementById("clockTime"),
       elClockD=document.getElementById("clockDate");
+
+/* phone single-day view: which day the column shows.
+   day===null → auto-follow the current day; a number → user picked it. */
+const mobileView={day:null};
+let autoFocusDay=0; // last computed "current" day, used as the nav base
+const elDayNav=document.getElementById("daynav"),
+      elDnDay=document.getElementById("dnDay"),
+      elDnDt=document.getElementById("dnDt"),
+      elDnPrev=document.getElementById("dnPrev"),
+      elDnNext=document.getElementById("dnNext"),
+      elDnLabel=document.getElementById("dnLabel");
 
 function fmtCountdown(ms){
   const tot=Math.max(0,Math.round(ms/1000));
@@ -498,6 +591,21 @@ function update(){
   document.querySelectorAll(".dayhead").forEach(el=>{
     el.classList.toggle("today", el.dataset.day!==undefined && +el.dataset.day===curDay);
   });
+
+  // ----- phone single-day focus (no effect on desktop; CSS is mobile-only) -----
+  autoFocusDay = curDay>=0 ? curDay : (nowCmp<FIRST ? 0 : DAYS.length-1);
+  const focusDay = (mobileView.day!=null) ? mobileView.day : autoFocusDay;
+  document.querySelectorAll(".dayhead[data-day]").forEach(el=>{
+    el.classList.toggle("mfocus", +el.dataset.day===focusDay);
+  });
+  document.querySelectorAll(".cell").forEach(el=>{
+    el.classList.toggle("mfocus", el.dataset.day!==undefined && +el.dataset.day===focusDay);
+  });
+  elDnDay.textContent=DAYS[focusDay].label;
+  elDnDt.textContent=DAYS[focusDay].dt;
+  elDayNav.classList.toggle("istoday", focusDay===curDay);
+  elDnPrev.disabled=(focusDay<=0);
+  elDnNext.disabled=(focusDay>=DAYS.length-1);
   document.querySelectorAll(".timecell").forEach(el=>{
     const live=(+el.dataset.slot===curSlot && curSlot>=0);
     el.classList.toggle("live",live);
@@ -555,6 +663,18 @@ range.addEventListener("input",()=>{
 resetBtn.addEventListener("click",()=>{
   toggle.checked=false;preview.on=false;range.disabled=true;pv.textContent="live";update();
 });
+
+/* ---------------- phone day navigation ---------------- */
+function shiftDay(dir){
+  const base=(mobileView.day!=null)?mobileView.day:autoFocusDay;
+  mobileView.day=Math.min(Math.max(base+dir,0),DAYS.length-1);
+  update();
+}
+elDnPrev.addEventListener("click",()=>shiftDay(-1));
+elDnNext.addEventListener("click",()=>shiftDay(1));
+function backToToday(){ mobileView.day=null; update(); }
+elDnLabel.addEventListener("click",backToToday);
+elDnLabel.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); backToToday(); }});
 
 /* ---------------- fullscreen ---------------- */
 const fsBtn=document.getElementById("fsBtn"), fsLabel=document.getElementById("fsLabel");
