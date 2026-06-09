@@ -166,6 +166,8 @@
     text-shadow:0 1px 2px rgba(0,0,0,.4);
   }
   .cell.current .spk,.cell.current .desc{padding-top:10px}
+  /* while a session is live, dim every card except the one running now */
+  body.session-live .cell:not(.current):not(.empty){opacity:.28}
 
   /* ---- legend / controls ---- */
   .foot{
@@ -568,6 +570,9 @@ function update(){
   // figure out current + next session
   const current=SESSIONS.find(x=>nowCmp>=x.start && nowCmp<x.end);
   const next=SESSIONS.find(x=>x.start>nowCmp);
+
+  // when a session is running, dim every other card to spotlight it
+  document.body.classList.toggle("session-live", !!current);
 
   // the live cell gains a "LIVE NOW" badge + extra padding; re-fit when it
   // changes so its title still fits the cell in TV / fullscreen mode.
