@@ -151,6 +151,8 @@
     letter-spacing:.07em;text-transform:uppercase;
     padding:.1em .7em;border-radius:999px;margin-bottom:.45em;
   }
+  .cell .wk-keynote{background:var(--now);color:#3a2a05}
+  .cell .wk-hero-of-science{background:#7fe0e8;color:#073b41}
   .cell .desc{opacity:.95}
   .cell.label .desc{font-weight:800;opacity:1}
 
@@ -460,7 +462,7 @@ const CELLS = [
   [ {t:S,d:"Registration / Introduction"},
     {t:P,d:"Speed Talks and Poster Session"},
     {t:T,d:"Q&A — Ralph Hertwig and Peter M. Todd"},
-    {t:T,s:"Keynote — Krishna Gummadi",d:"Engineering the Psychology of Machine Judgment Under Uncertainty"},
+    {t:T,s:"Krishna Gummadi",w:"Keynote",d:"Engineering the Psychology of Machine Judgment Under Uncertainty"},
     {t:P,d:"Project Discussion"},
     {t:P,d:"Project Discussion"},
     _,
@@ -514,7 +516,7 @@ function buildGrid(){
       const c=CELLS[si][di];
       if(!c){ html+=`<div class="cell empty" data-day="${di}" data-slot="${si}"></div>`; return; }
       let inner="";
-      if(c.w) inner+=`<span class="wk">${c.w}</span>`;
+      if(c.w) inner+=`<span class="wk wk-${c.w.toLowerCase().replace(/[^a-z0-9]+/g,"-")}">${c.w}</span>`;
       if(c.s) inner+=`<span class="spk">${c.s}</span>`;
       inner+=`<span class="desc">${c.d}</span>`;
       const cls = (c.t===X ? "special" : c.t) + (c.s ? "" : " label");
@@ -640,11 +642,11 @@ function update(){
   }else if(current){
     const c=current.c, d=DAYS[current.di];
     elLabel.textContent="● Live now";
-    elText.innerHTML=`<b>${d.label} · ${SLOTS[current.si].start}–${SLOTS[current.si].end}</b> — ${c.s?c.s+": ":""}${c.d}. Ends in <b>${fmtCountdown(current.end-nowCmp)}</b>.`;
+    elText.innerHTML=`<b>${d.label} · ${SLOTS[current.si].start}–${SLOTS[current.si].end}</b> — ${c.w?c.w+" · ":""}${c.s?c.s+": ":""}${c.d}. Ends in <b>${fmtCountdown(current.end-nowCmp)}</b>.`;
   }else if(next){
     const c=next.c, d=DAYS[next.di];
     elLabel.textContent="On a break · up next";
-    elText.innerHTML=`<b>${d.label} · ${SLOTS[next.si].start}</b> — ${c.s?c.s+": ":""}${c.d}. Starts in <b>${fmtCountdown(next.start-nowCmp)}</b>.`;
+    elText.innerHTML=`<b>${d.label} · ${SLOTS[next.si].start}</b> — ${c.w?c.w+" · ":""}${c.s?c.s+": ":""}${c.d}. Starts in <b>${fmtCountdown(next.start-nowCmp)}</b>.`;
   }else{
     elLabel.textContent="Day off";
     elText.innerHTML=`No sessions right now — enjoy the break.`;
