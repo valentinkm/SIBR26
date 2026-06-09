@@ -87,18 +87,6 @@
     min-width:1180px;
   }
 
-  .group{
-    grid-row:1;
-    font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--muted);
-    padding:2px 10px 8px;
-    border-bottom:2px solid var(--line);
-    display:flex;align-items:flex-end;
-  }
-  .group.school{grid-column:2 / span 4}
-  .group.conf{grid-column:6 / span 5}
-  .group .spacer{grid-column:1}
-
   .dayhead{
     border:1.5px solid var(--line);
     border-radius:11px;
@@ -180,7 +168,13 @@
   .legend .talk{background:var(--talk)}
   .legend .poster{background:var(--poster)}
   .legend .social{background:var(--social)}
-  .ctrl{margin-left:auto;display:flex;align-items:center;gap:10px}
+  /* preview controls stay invisible until the legend row is hovered (or focused) */
+  .ctrl{
+    margin-left:auto;display:flex;align-items:center;gap:10px;
+    opacity:0;transition:opacity .25s ease;
+  }
+  .foot:hover .ctrl,.ctrl:focus-within,
+  .ctrl:has(#previewToggle:checked){opacity:1}
   .ctrl label{color:#9aa0b5}
   .ctrl input[type=range]{width:230px;accent-color:var(--now)}
   .ctrl button{
@@ -228,7 +222,7 @@
     flex:1 1 auto;min-height:0;height:100%;
     /* wider time column so big time numbers stay clear of the day cards */
     grid-template-columns:clamp(112px,7.5vw,190px) repeat(9, minmax(0,1fr));
-    grid-template-rows:auto auto repeat(4, minmax(min-content,1fr));
+    grid-template-rows:auto repeat(4, minmax(min-content,1fr));
     gap:clamp(6px,0.8vmin,12px);
   }
   body.is-fs .cell{display:flex;flex-direction:column;justify-content:center}
@@ -249,7 +243,6 @@
   body.is-fs .dayhead .dt{font-size:clamp(15px,1.8vh,34px)}
   body.is-fs .dayhead.today .d::after{font-size:clamp(14px,1.75vh,32px)}
   body.is-fs .timecell{font-size:clamp(18px,2.5vh,46px);overflow:hidden;padding:6px clamp(4px,0.6vw,12px)}
-  body.is-fs .group{font-size:clamp(10px,1.05vh,20px)}
   body.is-fs .status .lead{font-size:clamp(20px,3.5vh,64px);line-height:1.28}
   body.is-fs .status .lead .label{font-size:clamp(12px,1.55vh,28px)}
   body.is-fs .status .clock .t{font-size:clamp(28px,4.4vh,88px)}
@@ -314,7 +307,6 @@
       grid-template-rows:auto repeat(4, minmax(64px, 1fr));
       gap:7px;
     }
-    .grid > .group{display:none}
     .grid > .dayhead[data-day]:not(.mfocus){display:none}
     .grid > .cell:not(.mfocus){display:none}
 
@@ -345,11 +337,10 @@
 <header class="top">
   <div>
     <h1>SCHEDULE</h1>
-    <div class="sub">SUMMER INSTITUTE · JUNE 8–11, 2026</div>
+    <div class="sub">SUMMER INSTITUTE · JUNE 8–16, 2026</div>
   </div>
   <div class="title">
     <b>DECISION MAKING IN THE AGE OF ARTIFICIAL INTELLIGENCE</b>
-    <span>CONFERENCE · JUNE 12–16, 2026</span>
   </div>
 </header>
 
@@ -497,9 +488,6 @@ const RANGE_LO=cmp(0,"08:00"), RANGE_HI=cmp(8,"21:00");
 const grid=document.getElementById("grid");
 function buildGrid(){
   let html="";
-  html+='<div class="group spacer"></div>';
-  html+='<div class="group school">Summer Institute · Jun 8–11</div>';
-  html+='<div class="group conf">Conference · Jun 12–16</div>';
   // header row
   html+='<div class="dayhead" style="visibility:hidden"></div>';
   DAYS.forEach((d,di)=>{
