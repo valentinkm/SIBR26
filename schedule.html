@@ -232,15 +232,18 @@
   body.is-fs .foot{padding:clamp(8px,1vh,14px) 8px 2px}
   body.is-fs .ctrl{display:none}
 
-  /* ---- fullscreen: type scales with the screen so it reads on a big TV ---- */
-  body.is-fs .cell{font-size:clamp(13px,1.55vh,30px);line-height:1.28;padding:clamp(9px,1.2vh,22px) clamp(10px,1.1vw,24px)}
-  body.is-fs .cell .spk{font-size:clamp(14px,1.75vh,34px);margin-bottom:clamp(2px,0.4vh,8px)}
-  body.is-fs .cell.special{font-size:clamp(14px,1.75vh,34px)}
+  /* ---- fullscreen: type scales with the screen so it reads on a big TV ----
+     Day / time / speaker are short, so they go large. The title (.desc) is the
+     one thing that can overflow a narrow 9-column cell, so it stays relative to
+     the cell font and is auto-shrunk per-cell by fitCells() if it won't fit.   */
+  body.is-fs .cell{font-size:clamp(15px,1.95vh,34px);line-height:1.26;padding:clamp(9px,1.2vh,22px) clamp(10px,1.1vw,24px);overflow:hidden}
+  body.is-fs .cell .spk{font-size:1.18em;margin-bottom:clamp(2px,0.4vh,8px)}
+  body.is-fs .cell.special{font-size:1.12em}
   body.is-fs .cell.current::before{font-size:clamp(10px,1.05vh,20px)}
-  body.is-fs .dayhead{padding:clamp(8px,1vh,16px) 6px}
-  body.is-fs .dayhead .d{font-size:clamp(13px,1.55vh,30px)}
-  body.is-fs .dayhead .dt{font-size:clamp(10px,1.05vh,20px)}
-  body.is-fs .timecell{font-size:clamp(12px,1.45vh,28px)}
+  body.is-fs .dayhead{padding:clamp(8px,1.1vh,18px) 6px}
+  body.is-fs .dayhead .d{font-size:clamp(18px,2.4vh,46px)}
+  body.is-fs .dayhead .dt{font-size:clamp(11px,1.25vh,24px)}
+  body.is-fs .timecell{font-size:clamp(16px,2.2vh,42px)}
   body.is-fs .group{font-size:clamp(10px,1.05vh,20px)}
   body.is-fs .status .lead{font-size:clamp(14px,1.65vh,32px)}
   body.is-fs .status .lead .label{font-size:clamp(10px,1.05vh,18px)}
@@ -550,6 +553,7 @@ function fmtCountdown(ms){
   return `${m}m ${String(s).padStart(2,"0")}s`;
 }
 const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+let lastCurKey="";
 
 function update(){
   let nowCmp, clockStr, dateStr;
@@ -569,6 +573,15 @@ function update(){
   // figure out current + next session
   const current=SESSIONS.find(x=>nowCmp>=x.start && nowCmp<x.end);
   const next=SESSIONS.find(x=>x.start>nowCmp);
+
+  // the live cell gains a "LIVE NOW" badge + extra padding; re-fit when it
+  // changes so its title still fits the cell in TV / fullscreen mode.
+  const curKey=current?current.di+"-"+current.si:"";
+  if(curKey!==lastCurKey){
+    lastCurKey=curKey;
+    if(document.body.classList.contains("is-fs"))
+      requestAnimationFrame(()=>requestAnimationFrame(fitCells));
+  }
 
   // highlight cells
   document.querySelectorAll(".cell").forEach(el=>{
@@ -693,9 +706,33 @@ function onFsChange(){
   const on=!!(document.fullscreenElement||document.webkitFullscreenElement);
   fsLabel.textContent=on?"Exit full screen":"Full screen";
   document.body.classList.toggle("is-fs",on);
+  if(on){ requestAnimationFrame(()=>requestAnimationFrame(fitCells)); }
+  else { document.querySelectorAll(".cell").forEach(el=>{ el.style.fontSize=""; }); }
 }
 document.addEventListener("fullscreenchange",onFsChange);
 document.addEventListener("webkitfullscreenchange",onFsChange);
+
+/* On a TV every session must fit on screen — no scrolling. Day/time/speaker are
+   sized large by CSS; here we shrink only the title of any cell whose content
+   would overflow its row, so long talks stay legible without breaking the grid. */
+function fitCells(){
+  if(!document.body.classList.contains("is-fs")) return;
+  const cells=document.querySelectorAll(".cell:not(.empty)");
+  cells.forEach(el=>{ el.style.fontSize=""; });            // reset to CSS base
+  cells.forEach(el=>{
+    let size=parseFloat(getComputedStyle(el).fontSize);
+    let guard=24;
+    while(el.scrollHeight>el.clientHeight+1 && size>11 && guard-- > 0){
+      size*=0.93;
+      el.style.fontSize=size+"px";
+    }
+  });
+}
+let fitTimer;
+window.addEventListener("resize",()=>{
+  clearTimeout(fitTimer);
+  fitTimer=setTimeout(()=>requestAnimationFrame(fitCells),120);
+});
 
 /* ---------------- run ---------------- */
 update();
