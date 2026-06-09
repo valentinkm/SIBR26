@@ -226,8 +226,7 @@
     flex:1 1 auto;min-height:0;height:100%;
     /* wider time column so big time numbers stay clear of the day cards */
     grid-template-columns:clamp(112px,7.5vw,190px) repeat(9, minmax(0,1fr));
-    /* last slot row (social-only: BBQ / Dinner / Tour) ~quarter height */
-    grid-template-rows:auto auto repeat(4, minmax(min-content,1fr)) minmax(min-content,0.55fr);
+    grid-template-rows:auto auto repeat(4, minmax(min-content,1fr));
     gap:clamp(6px,0.8vmin,12px);
   }
   body.is-fs .cell{display:flex;flex-direction:column;justify-content:center}
@@ -243,12 +242,6 @@
   body.is-fs .cell .spk{font-size:1.2em;margin-bottom:clamp(2px,0.4vh,8px)}
   body.is-fs .cell.special .desc{font-size:1.2em}
   body.is-fs .cell.current::before{font-size:clamp(10px,1.05vh,20px)}
-  /* last slot is social-only (BBQ / Dinner / Tour) — keep it one compact line
-     so the talk rows above get the extra height */
-  body.is-fs .cell[data-slot="4"]{font-size:clamp(18px,2.3vh,40px);justify-content:center;white-space:nowrap}
-  /* evening slot shows just the start time (no "– 20:00") */
-  body.is-fs .timecell[data-slot="4"]{font-size:clamp(16px,2.1vh,38px)}
-  body.is-fs .timecell[data-slot="4"] .te{display:none}
   body.is-fs .dayhead{padding:clamp(8px,1.1vh,18px) 6px}
   body.is-fs .dayhead .d{font-size:clamp(20px,2.75vh,52px)}
   body.is-fs .dayhead .dt{font-size:clamp(15px,1.8vh,34px)}
@@ -316,7 +309,7 @@
     .grid{
       flex:1 1 auto;min-height:0;min-width:0;
       grid-template-columns:50px 1fr;
-      grid-template-rows:auto repeat(5, minmax(64px, 1fr));
+      grid-template-rows:auto repeat(4, minmax(64px, 1fr));
       gap:7px;
     }
     .grid > .group{display:none}
@@ -423,7 +416,6 @@ const SLOTS = [
   {start:"11:30", end:"13:00"},
   {start:"14:00", end:"16:00"},
   {start:"16:30", end:"18:00"},
-  {start:"18:30", end:"20:00"},
 ];
 const T="talk", P="poster", S="social", X="special", _=null;
 // rows = slots, columns = days (Mon8 … Tue16)
@@ -466,13 +458,6 @@ const CELLS = [
     {t:P,d:"Project Discussion"},
     _,
     {t:T,s:"Renée DiResta",w:"Hero of Science",d:"Invisible Rulers, Visible Costs: Propaganda, AI, and the Fight for Shared Reality"},
-    _ ],
-
-  [ {t:S,d:"Institute Tour / Drinks"},
-    _, _,
-    {t:S,d:"BBQ"},
-    _, _, _,
-    {t:S,d:"Dinner"},
     _ ],
 ];
 
