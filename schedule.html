@@ -224,7 +224,10 @@
   }
   body.is-fs .grid{
     flex:1 1 auto;min-height:0;height:100%;
-    grid-template-rows:auto auto repeat(5, minmax(min-content,1fr));
+    /* wider time column so big time numbers stay clear of the day cards */
+    grid-template-columns:clamp(112px,7.5vw,190px) repeat(9, minmax(0,1fr));
+    /* last slot row (social-only: BBQ / Dinner / Tour) ~quarter height */
+    grid-template-rows:auto auto repeat(4, minmax(min-content,1fr)) minmax(min-content,0.25fr);
     gap:clamp(6px,0.8vmin,12px);
   }
   body.is-fs .cell{display:flex;flex-direction:column;justify-content:center}
@@ -236,14 +239,19 @@
      Day / time / speaker are short, so they go large. The title (.desc) is the
      one thing that can overflow a narrow 9-column cell, so it stays relative to
      the cell font and is auto-shrunk per-cell by fitCells() if it won't fit.   */
-  body.is-fs .cell{font-size:clamp(15px,1.95vh,34px);line-height:1.26;padding:clamp(9px,1.2vh,22px) clamp(10px,1.1vw,24px);overflow:hidden}
-  body.is-fs .cell .spk{font-size:1.18em;margin-bottom:clamp(2px,0.4vh,8px)}
-  body.is-fs .cell.special{font-size:1.12em}
+  body.is-fs .cell{font-size:clamp(18px,2.55vh,46px);line-height:1.22;padding:clamp(8px,1.1vh,20px) clamp(10px,1vw,22px);overflow:hidden}
+  body.is-fs .cell .spk{font-size:1.2em;margin-bottom:clamp(2px,0.4vh,8px)}
+  body.is-fs .cell.special{font-size:1.1em}
   body.is-fs .cell.current::before{font-size:clamp(10px,1.05vh,20px)}
+  /* last slot is social-only (BBQ / Dinner / Tour) — keep it one compact line
+     so the talk rows above get the extra height */
+  body.is-fs .cell[data-slot="4"]{font-size:clamp(14px,1.8vh,32px);justify-content:center}
+  body.is-fs .timecell[data-slot="4"]{font-size:clamp(13px,1.7vh,28px)}
+  body.is-fs .timecell[data-slot="4"] br{display:none}
   body.is-fs .dayhead{padding:clamp(8px,1.1vh,18px) 6px}
-  body.is-fs .dayhead .d{font-size:clamp(18px,2.4vh,46px)}
-  body.is-fs .dayhead .dt{font-size:clamp(11px,1.25vh,24px)}
-  body.is-fs .timecell{font-size:clamp(16px,2.2vh,42px)}
+  body.is-fs .dayhead .d{font-size:clamp(20px,2.75vh,52px)}
+  body.is-fs .dayhead .dt{font-size:clamp(12px,1.35vh,26px)}
+  body.is-fs .timecell{font-size:clamp(18px,2.5vh,46px);overflow:hidden;padding:6px clamp(4px,0.6vw,12px)}
   body.is-fs .group{font-size:clamp(10px,1.05vh,20px)}
   body.is-fs .status .lead{font-size:clamp(14px,1.65vh,32px)}
   body.is-fs .status .lead .label{font-size:clamp(10px,1.05vh,18px)}
