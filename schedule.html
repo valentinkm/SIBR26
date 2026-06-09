@@ -22,12 +22,13 @@
     --now-glow:rgba(255,194,75,.55);
   }
   *{box-sizing:border-box}
-  html,body{margin:0}
+  html,body{margin:0;height:100%}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     background:var(--bg);
     color:var(--ink);
     -webkit-font-smoothing:antialiased;
+    display:flex;flex-direction:column;min-height:100vh;
   }
 
   /* ---- top bar ---- */
@@ -78,13 +79,17 @@
   .status .clock .z{font-size:11px;color:#9aa0b5;letter-spacing:.08em}
 
   /* ---- grid wrap ---- */
-  .wrap{padding:14px;background:var(--bg)}
-  .scroller{overflow-x:auto;border-radius:14px;background:var(--panel);padding:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+  /* the page is a flex column: the grid soaks up the leftover viewport height
+     so the schedule fills the screen instead of leaving black space below */
+  .wrap{padding:14px;background:var(--bg);flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+  .scroller{overflow:auto;border-radius:14px;background:var(--panel);padding:14px;box-shadow:0 10px 40px rgba(0,0,0,.35);flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
   .grid{
     display:grid;
     grid-template-columns:78px repeat(9, minmax(132px,1fr));
+    grid-template-rows:auto repeat(4, minmax(min-content,1fr));
     gap:8px;
     min-width:1180px;
+    flex:1 1 auto;min-height:0;
   }
 
   .dayhead{
@@ -129,8 +134,9 @@
     line-height:1.32;
     position:relative;
     transition:transform .15s ease, box-shadow .15s ease, opacity .2s;
+    display:flex;flex-direction:column;justify-content:center;
   }
-  .cell.empty{background:transparent}
+  .cell.empty{background:transparent;display:block}
   .cell.talk{background:var(--talk)}
   .cell.poster{background:var(--poster)}
   .cell.social{background:var(--social)}
