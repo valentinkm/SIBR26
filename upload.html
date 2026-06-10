@@ -98,6 +98,18 @@
     for (var i = 0; i < bytes.length; i += chunk) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
     return btoa(bin);
   }
+  // Best-effort error beacon: leaves a server-side trace in the Worker logs when
+  // an upload fails in the speaker's browser. Never blocks or breaks the page.
+  function report(stage, message, extra) {
+    try {
+      var p = { action: 'client-log', page: 'upload.html', stage: stage, message: String(message || '').slice(0, 500) };
+      if (extra) for (var k in extra) p[k] = extra[k];
+      fetch(ENDPOINT, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(p), keepalive: true
+      }).catch(function () {});
+    } catch (e) {}
+  }
 
   if (!token) { invalid('This page needs your personal upload link. Please use the link from the email the organizers sent you.'); return; }
 
@@ -107,10 +119,15 @@
     body: JSON.stringify({ action: 'whoami', token: token })
   }).then(function (r) {
     return r.json().catch(function () { return {}; }).then(function (d) {
-      if (!r.ok || !d.ok) { invalid('This upload link is invalid or has expired. Please use the latest link from the organizers, or get in touch.'); return; }
+      if (!r.ok || !d.ok) {
+        report('whoami', 'HTTP ' + r.status + (d.error ? ' — ' + d.error : ''));
+        invalid('This upload link is invalid or has expired. Please use the latest link from the organizers, or get in touch.');
+        return;
+      }
       render(d);
     });
-  }).catch(function () {
+  }).catch(function (err) {
+    report('whoami-network', (err && err.name) + ': ' + (err && err.message));
     invalid('Could not reach the upload service. Please check your connection and try again.');
   });
 
@@ -174,11 +191,21 @@
       ev.preventDefault();
       var key = curKey();
       if (!chosen || !confirmBox.checked || !key) return;
-      if (chosen.size > MAX_BYTES) { setStatus('That file is larger than 25 MB. Please compress it and try again.', 'err'); return; }
-      if (!/\.pdf$/i.test(chosen.name) && chosen.type !== 'application/pdf') { setStatus('Only PDF files are accepted.', 'err'); return; }
+      var fileInfo = { key: key, fileName: chosen.name, fileSize: chosen.size };
+      if (chosen.size > MAX_BYTES) {
+        report('precheck', 'file larger than 25 MB', fileInfo);
+        setStatus('That file is larger than 25 MB. Please compress it and try again.', 'err'); return;
+      }
+      if (!/\.pdf$/i.test(chosen.name) && chosen.type !== 'application/pdf') {
+        report('precheck', 'not a PDF (name/type: ' + chosen.type + ')', fileInfo);
+        setStatus('Only PDF files are accepted.', 'err'); return;
+      }
       submit.disabled = true; setStatus('Checking file…');
       chosen.slice(0, 5).arrayBuffer().then(function (buf) {
-        if (String.fromCharCode.apply(null, new Uint8Array(buf)) !== '%PDF-') { setStatus('That doesn’t look like a valid PDF.', 'err'); submit.disabled = false; return; }
+        if (String.fromCharCode.apply(null, new Uint8Array(buf)) !== '%PDF-') {
+          report('precheck', 'missing %PDF- magic bytes', fileInfo);
+          setStatus('That doesn’t look like a valid PDF.', 'err'); submit.disabled = false; return;
+        }
         setStatus('Uploading…');
         return chosen.arrayBuffer().then(function (full) {
           return fetch(ENDPOINT, {
@@ -187,11 +214,17 @@
           }).then(function (r) {
             return r.json().catch(function () { return {}; }).then(function (d2) {
               if (r.ok && d2.ok) { setStatus('✓ Slides uploaded — thank you! You can re-upload anytime to replace them.', 'ok'); }
-              else { setStatus('Upload failed: ' + (d2.error || ('HTTP ' + r.status)) + '. Please contact the organizers.', 'err'); submit.disabled = false; }
+              else {
+                report('upload-response', 'HTTP ' + r.status + (d2.error ? ' — ' + d2.error : ' (no JSON body)'), fileInfo);
+                setStatus('Upload failed: ' + (d2.error || ('HTTP ' + r.status)) + '. Please contact the organizers.', 'err'); submit.disabled = false;
+              }
             });
           });
         });
-      }).catch(function (err) { setStatus('Upload error: ' + err.message + '. Please contact the organizers.', 'err'); submit.disabled = false; });
+      }).catch(function (err) {
+        report('upload-error', (err && err.name) + ': ' + (err && err.message), fileInfo);
+        setStatus('Upload error: ' + err.message + '. Please contact the organizers.', 'err'); submit.disabled = false;
+      });
     });
   }
 })();
