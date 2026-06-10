@@ -440,8 +440,8 @@
 </div>
 
 <div class="fs-zone">
-  <button id="pauseBtn" title="Pause the Chrome reminder (P)">
-    <span id="pauseLabel">⏸ Pause reminder</span>
+  <button id="pauseBtn" title="Pause reminders &amp; live spotlight (P)">
+    <span id="pauseLabel">⏸ Pause live view</span>
   </button>
   <button id="fsBtn" title="Toggle full screen (F)">
     <svg viewBox="0 0 24 24"><path d="M4 9V4h5v2H6v3H4zm0 6h2v3h3v2H4v-5zm16 0v5h-5v-2h3v-3h2zM20 9h-2V6h-3V4h5v5z"/></svg>
@@ -557,7 +557,7 @@ const pauseBtn=document.getElementById("pauseBtn"),
 function togglePause(){
   chromePaused=!chromePaused;
   pauseBtn.classList.toggle("paused",chromePaused);
-  pauseLabel.textContent=chromePaused?"▶ Reminder paused":"⏸ Pause reminder";
+  pauseLabel.textContent=chromePaused?"▶ Paused — resume":"⏸ Pause live view";
   update();
 }
 pauseBtn.addEventListener("click",togglePause);
@@ -638,14 +638,14 @@ function update(){
   const current=SESSIONS.find(x=>nowCmp>=x.start && nowCmp<x.end);
   const next=SESSIONS.find(x=>x.start>nowCmp);
 
-  // when a session is running, dim every other card to spotlight it
-  document.body.classList.toggle("session-live", !!current);
+  // when a session is running, dim every other card to spotlight it —
+  // unless paused (P), which shows the full schedule as during a break
+  document.body.classList.toggle("session-live", !!current && !chromePaused);
 
   // Chrome reminder: only during breaks (no live session), only before the
   // workshop starts; pops up for CHROME_SHOW at every CHROME_CYCLE boundary.
   const chromeActive=CHROME_SESSION && nowCmp>=CHROME_FROM && nowCmp<CHROME_SESSION.start && !current && !chromePaused;
   chromeOverlay.classList.toggle("show", chromeActive && (nowCmp % CHROME_CYCLE) < CHROME_SHOW);
-  pauseBtn.style.display=(CHROME_SESSION && nowCmp<CHROME_SESSION.start)?"":"none";
 
   // the live cell gains a "LIVE NOW" badge + extra padding; re-fit when it
   // changes so its title still fits the cell in TV / fullscreen mode.
