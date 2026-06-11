@@ -45,8 +45,8 @@
   }
   .top .nowslot{font-size:15px;letter-spacing:.1em;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
   .top .nowslot.idle{color:#9aa0b5;font-weight:600}
-  .top .title{text-align:right}
-  .top .title b{font-size:15px;font-weight:800;letter-spacing:.06em;display:block;line-height:1.3;max-width:520px}
+  .top .title{text-align:right;flex:1;min-width:0}
+  .top .title b{font-size:14px;font-weight:800;letter-spacing:.06em;display:block;line-height:1.3;white-space:nowrap;overflow:hidden}
   .top .title span{font-size:12px;color:#9aa0b5;letter-spacing:.08em}
 
   /* ---- status banner ---- */
@@ -291,14 +291,14 @@
   body.is-fs .status .clock .t{font-size:clamp(28px,4.4vh,88px)}
   body.is-fs .status .clock .z{font-size:clamp(11px,1.35vh,24px)}
   body.is-fs .top .nowslot{font-size:clamp(15px,1.7vh,34px)}
-  body.is-fs .top .title b{font-size:clamp(15px,1.7vh,34px);max-width:none}
+  body.is-fs .top .title b{font-size:clamp(15px,1.7vh,34px)}
   body.is-fs .top .title span{font-size:clamp(11px,1.15vh,22px)}
   body.is-fs .foot{font-size:clamp(12px,1.3vh,24px)}
   body.is-fs .legend i{width:clamp(14px,1.4vh,26px);height:clamp(14px,1.4vh,26px)}
   .ctrl .pv{color:var(--now);font-weight:700;font-variant-numeric:tabular-nums;min-width:170px;display:inline-block}
 
   @media (max-width:640px){
-    .top .title b{font-size:13px}
+    .top .title b{font-size:11px}
     .status .clock{margin-left:0}
     .ctrl{margin-left:0;width:100%;flex-wrap:wrap}
     .ctrl input[type=range]{flex:1;width:auto}
@@ -676,12 +676,13 @@ function update(){
   });
 
   // top-left header: the time slot running right now; just the day during breaks
-  if(current){
-    elNowSlot.textContent=DAYS[current.di].label+" · "+SLOTS[current.si].start+"–"+SLOTS[current.si].end;
-    elNowSlot.classList.remove("idle");
-  }else{
-    elNowSlot.innerHTML=curDay>=0?DAYS[curDay].label:"&nbsp;";
-    elNowSlot.classList.add("idle");
+  const slotTxt=current
+    ? DAYS[current.di].label+" · "+SLOTS[current.si].start+"–"+SLOTS[current.si].end
+    : (curDay>=0?DAYS[curDay].label:" ");
+  if(slotTxt!==elNowSlot.textContent){
+    elNowSlot.textContent=slotTxt;
+    elNowSlot.classList.toggle("idle",!current);
+    fitTitle();                       // slot width changed → title space changed
   }
 
   // ----- phone single-day focus (no effect on desktop; CSS is mobile-only) -----
@@ -789,6 +790,7 @@ function onFsChange(){
   document.body.classList.toggle("is-fs",on);
   if(on){ requestAnimationFrame(()=>requestAnimationFrame(fitCells)); }
   else { document.querySelectorAll(".cell").forEach(el=>{ el.style.fontSize=""; }); }
+  requestAnimationFrame(()=>requestAnimationFrame(fitTitle));
 }
 document.addEventListener("fullscreenchange",onFsChange);
 document.addEventListener("webkitfullscreenchange",onFsChange);
@@ -809,14 +811,27 @@ function fitCells(){
     }
   });
 }
+/* The header title must never wrap: start from its CSS size and shrink
+   until the whole line fits the space left of the time-slot readout. */
+const titleEl=document.querySelector(".top .title b");
+function fitTitle(){
+  titleEl.style.fontSize="";                               // reset to CSS base
+  let size=parseFloat(getComputedStyle(titleEl).fontSize), guard=24;
+  while(titleEl.scrollWidth>titleEl.clientWidth+1 && size>8 && guard-- > 0){
+    size*=0.93;
+    titleEl.style.fontSize=size+"px";
+  }
+}
 let fitTimer;
 window.addEventListener("resize",()=>{
   clearTimeout(fitTimer);
-  fitTimer=setTimeout(()=>requestAnimationFrame(fitCells),120);
+  fitTimer=setTimeout(()=>requestAnimationFrame(()=>{fitCells();fitTitle();}),120);
 });
 
 /* ---------------- run ---------------- */
 update();
+fitTitle();
+if(document.fonts) document.fonts.ready.then(fitTitle);
 setInterval(()=>{ if(!preview.on) update(); },1000);
 
 // scroll current day into view on load
