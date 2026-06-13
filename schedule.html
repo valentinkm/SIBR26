@@ -71,10 +71,18 @@
     70%{box-shadow:0 0 0 12px rgba(255,194,75,0)}
     100%{box-shadow:0 0 0 0 rgba(255,194,75,0)}
   }
-  .status .lead{font-size:14px;line-height:1.4}
+  .status .lead{font-size:14px;line-height:1.4;flex:1 1 240px;min-width:0}
   .status .lead .label{color:#9aa0b5;text-transform:uppercase;letter-spacing:.1em;font-size:11px;font-weight:700;display:block;margin-bottom:2px}
   .status .lead b{font-weight:700}
-  .status .clock{margin-left:auto;text-align:right;font-variant-numeric:tabular-nums}
+  /* title is always exactly one line; long titles ellipsize instead of wrapping */
+  .status #statusText{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* countdown lives in its own fixed-width slot so its per-second ticking
+     never reflows the title or nudges the clock */
+  .status .countdown{flex:none;text-align:right;font-variant-numeric:tabular-nums}
+  .status .countdown[hidden]{display:none}
+  .status .countdown .cd-label{color:#9aa0b5;text-transform:uppercase;letter-spacing:.1em;font-size:11px;font-weight:700;display:block;margin-bottom:2px}
+  .status .countdown .cd-val{display:block;font-size:18px;font-weight:700;min-width:120px}
+  .status .clock{text-align:right;font-variant-numeric:tabular-nums}
   .status .clock .t{font-size:22px;font-weight:700;letter-spacing:.02em}
   .status .clock .z{font-size:11px;color:#9aa0b5;letter-spacing:.08em}
 
@@ -375,6 +383,10 @@
     <span class="label" id="statusLabel">Status</span>
     <span id="statusText">Loading…</span>
   </div>
+  <div class="countdown" id="statusCountdown" hidden>
+    <span class="cd-label" id="cdLabel">Ends in</span>
+    <span class="cd-val" id="cdVal">—</span>
+  </div>
   <div class="clock">
     <div class="t" id="clockTime">--:--:--</div>
     <div class="z">Europe/Berlin · <span id="clockDate">—</span></div>
@@ -554,6 +566,9 @@ buildGrid();
 const elDot=document.getElementById("statusDot"),
       elLabel=document.getElementById("statusLabel"),
       elText=document.getElementById("statusText"),
+      elCd=document.getElementById("statusCountdown"),
+      elCdLabel=document.getElementById("cdLabel"),
+      elCdVal=document.getElementById("cdVal"),
       elClockT=document.getElementById("clockTime"),
       elClockD=document.getElementById("clockDate"),
       elNowSlot=document.getElementById("nowSlot");
@@ -669,22 +684,27 @@ function update(){
   if(nowCmp<FIRST){
     elDot.style.display="none";
     elLabel.textContent="Not started yet";
-    elText.innerHTML=`The institute begins <b>Mon, Jun 8 · 16:30</b> — Registration / Introduction. Starts in <b>${fmtCountdown(FIRST-nowCmp)}</b>.`;
+    elText.innerHTML=`The institute begins <b>Mon, Jun 8 · 16:30</b> — Registration / Introduction.`;
+    elCdLabel.textContent="Starts in"; elCdVal.textContent=fmtCountdown(FIRST-nowCmp); elCd.hidden=false;
   }else if(nowCmp>=LAST){
     elDot.style.display="none";
     elLabel.textContent="Concluded";
     elText.innerHTML=`The institute has concluded. Thanks for joining! 🎉`;
+    elCd.hidden=true;
   }else if(current){
     const c=current.c, d=DAYS[current.di];
     elLabel.textContent="● Live now";
-    elText.innerHTML=`<b>${d.label} · ${SLOTS[current.si].start}–${SLOTS[current.si].end}</b> — ${c.w?c.w+" · ":""}${c.s?c.s+": ":""}${c.d}. Ends in <b>${fmtCountdown(current.end-nowCmp)}</b>.`;
+    elText.innerHTML=`<b>${d.label} · ${SLOTS[current.si].start}–${SLOTS[current.si].end}</b> — ${c.w?c.w+" · ":""}${c.s?c.s+": ":""}${c.d}`;
+    elCdLabel.textContent="Ends in"; elCdVal.textContent=fmtCountdown(current.end-nowCmp); elCd.hidden=false;
   }else if(next){
     const c=next.c, d=DAYS[next.di];
     elLabel.textContent="On a break · up next";
-    elText.innerHTML=`<b>${d.label} · ${SLOTS[next.si].start}</b> — ${c.w?c.w+" · ":""}${c.s?c.s+": ":""}${c.d}. Starts in <b>${fmtCountdown(next.start-nowCmp)}</b>.`;
+    elText.innerHTML=`<b>${d.label} · ${SLOTS[next.si].start}</b> — ${c.w?c.w+" · ":""}${c.s?c.s+": ":""}${c.d}`;
+    elCdLabel.textContent="Starts in"; elCdVal.textContent=fmtCountdown(next.start-nowCmp); elCd.hidden=false;
   }else{
     elLabel.textContent="Day off";
     elText.innerHTML=`No sessions right now — enjoy the break.`;
+    elCd.hidden=true;
   }
 }
 
