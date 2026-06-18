@@ -133,6 +133,22 @@
     letter-spacing: 0.01em;
   }
   .day-empty .day-header { background: #2d333b; color: var(--muted); }
+  .group-photos {
+    padding: 16px 20px;
+    display: grid;
+    gap: 16px;
+  }
+  .group-photos figure { margin: 0; }
+  .group-photos img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    background: #1f1f1f;
+  }
+  @media (min-width: 760px) {
+    .group-photos { grid-template-columns: 1fr 1fr; }
+  }
   .sessions { list-style: none; margin: 0; padding: 0; }
   .session-row {
     border-top: 1px solid var(--line);
@@ -919,6 +935,24 @@
       password-protected companion site.
       <a href="https://valentinkm.github.io/sibr26-1e747e3b/" target="_blank" rel="nofollow noopener">Open the participant site →</a>
     </p>
+  </section>
+
+  <section class="day">
+    <div class="day-header">Group photo</div>
+    <div class="group-photos">
+      <figure>
+        <picture>
+          <source srcset="group-photo-1.webp" type="image/webp">
+          <img src="group-photo-1.jpg" alt="SIBR 2026 participants outside the Max Planck Institute for Human Development" loading="lazy" width="2000" height="1325">
+        </picture>
+      </figure>
+      <figure>
+        <picture>
+          <source srcset="group-photo-2.webp" type="image/webp">
+          <img src="group-photo-2.jpg" alt="SIBR 2026 participants in the lecture hall" loading="lazy" width="2000" height="1325">
+        </picture>
+      </figure>
+    </div>
   </section>
 
   <section class="day">
